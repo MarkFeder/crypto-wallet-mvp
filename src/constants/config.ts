@@ -29,3 +29,18 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: 'crypto_wallet_token',
   USER: 'crypto_wallet_user',
 };
+
+export const APP_CONFIG = {
+  PRICE_POLLING_INTERVAL: 30000, // 30 seconds
+  CLIPBOARD_RESET_DELAY: 2000, // 2 seconds
+  ADDRESS_DISPLAY: {
+    SHORT_START_LENGTH: 12,
+    SHORT_END_LENGTH: 8,
+    TRANSACTION_START_LENGTH: 12,
+    TRANSACTION_END_LENGTH: 4,
+  },
+  FORMATTING: {
+    CRYPTO_DECIMALS: 8,
+    CURRENCY_DECIMALS: 2,
+  },
+};

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchTransactions } from '../redux/walletSlice';
 import { Wallet, WalletAddress } from '../types';
+import { APP_CONFIG } from '../constants/config';
 import { formatCurrency, formatCrypto, shortenAddress } from '../utils/format';
 import { useClipboard } from '../hooks';
 import SendTransaction from './SendTransaction';
@@ -60,7 +61,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                 </div>
                 <div className="address-value">{formatCurrency(value)}</div>
                 <div className="address-text" title={addr.address}>
-                  {shortenAddress(addr.address, 12, 8)}
+                  {shortenAddress(addr.address, APP_CONFIG.ADDRESS_DISPLAY.SHORT_START_LENGTH, APP_CONFIG.ADDRESS_DISPLAY.SHORT_END_LENGTH)}
                 </div>
                 <button
                   className="btn-copy"
@@ -94,7 +95,11 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                 </div>
                 <div className="tx-address">
                   {tx.type === 'send' ? 'To: ' : 'From: '}
-                  {shortenAddress((tx.type === 'send' ? tx.to_address : tx.from_address) || '', 12, 4)}
+                  {shortenAddress(
+                    (tx.type === 'send' ? tx.to_address : tx.from_address) || '',
+                    APP_CONFIG.ADDRESS_DISPLAY.TRANSACTION_START_LENGTH,
+                    APP_CONFIG.ADDRESS_DISPLAY.TRANSACTION_END_LENGTH
+                  )}
                 </div>
                 <div className="tx-status">
                   <span className={`status-badge ${tx.status}`}>{tx.status}</span>
