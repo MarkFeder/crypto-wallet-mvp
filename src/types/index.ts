@@ -22,6 +22,15 @@ export interface WalletAddress {
   balance: string;
 }
 
+export interface CreateWalletResponse {
+  wallet: Wallet;
+  mnemonic: string;
+  addresses: {
+    BTC: string;
+    ETH: string;
+  };
+}
+
 export interface Transaction {
   id?: number;
   wallet_id?: number;

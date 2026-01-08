@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { logout } from '../redux/authSlice';
 import { fetchWallets, createWallet, selectWallet } from '../redux/walletSlice';
+import { Wallet } from '../types';
 import Portfolio from './Portfolio';
 import WalletDetail from './WalletDetail';
 import CreateWallet from './CreateWallet';
@@ -27,7 +28,7 @@ const Dashboard: React.FC = () => {
     dispatch(fetchWallets());
   };
 
-  const handleSelectWallet = (wallet: any) => {
+  const handleSelectWallet = (wallet: Wallet) => {
     dispatch(selectWallet(wallet));
   };
 

@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { apiService } from '../services/api';
-import { Wallet, Transaction, WalletState } from '../types';
+import { Wallet, Transaction, WalletState, CreateWalletResponse } from '../types';
 import { API_ENDPOINTS } from '../constants/config';
 
 interface ExtendedWalletState extends WalletState {
@@ -22,7 +22,7 @@ const initialState: ExtendedWalletState = {
 export const createWallet = createAsyncThunk(
   'wallet/create',
   async (name: string) => {
-    const response = await apiService.post<any>(API_ENDPOINTS.WALLETS.BASE, { name });
+    const response = await apiService.post<CreateWalletResponse>(API_ENDPOINTS.WALLETS.BASE, { name });
     return response;
   }
 );
@@ -71,7 +71,7 @@ const walletSlice = createSlice({
   name: 'wallet',
   initialState,
   reducers: {
-    selectWallet: (state, action) => {
+    selectWallet: (state, action: PayloadAction<Wallet>) => {
       state.selectedWallet = action.payload;
     },
     clearMnemonic: (state) => {

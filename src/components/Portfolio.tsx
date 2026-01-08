@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { Wallet, WalletAddress, Price } from '../types';
 
 interface PortfolioProps {
-  wallets: any[];
+  wallets: Wallet[];
 }
 
 const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
@@ -12,8 +13,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
   const calculateTotalValue = () => {
     let total = 0;
     wallets.forEach((wallet) => {
-      wallet.addresses.forEach((addr: any) => {
-        const price = prices[addr.currency]?.usd || 0;
+      wallet.addresses.forEach((addr: WalletAddress) => {
+        const price = parseFloat(prices[addr.currency]?.price || '0');
         total += parseFloat(addr.balance) * price;
       });
     });
@@ -50,25 +51,25 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
       <div className="assets-section">
         <h3>Assets by Currency</h3>
         <div className="assets-grid">
-          {Object.entries(prices).map(([currency, data]: [string, any]) => {
+          {Object.entries(prices).map(([currency, data]: [string, Price]) => {
             const totalBalance = wallets.reduce((sum, wallet) => {
-              const addr = wallet.addresses.find((a: any) => a.currency === currency);
+              const addr = wallet.addresses.find((a: WalletAddress) => a.currency === currency);
               return sum + (addr ? parseFloat(addr.balance) : 0);
             }, 0);
 
-            const value = totalBalance * data.usd;
+            const value = totalBalance * parseFloat(data.price);
 
             return (
               <div key={currency} className="asset-card">
                 <div className="asset-header">
                   <span className="asset-name">{currency}</span>
-                  <span className={`asset-change ${data.change_24h >= 0 ? 'positive' : 'negative'}`}>
-                    {data.change_24h >= 0 ? '↑' : '↓'} {Math.abs(data.change_24h).toFixed(2)}%
+                  <span className={`asset-change ${data.change24h >= 0 ? 'positive' : 'negative'}`}>
+                    {data.change24h >= 0 ? '↑' : '↓'} {Math.abs(data.change24h).toFixed(2)}%
                   </span>
                 </div>
                 <div className="asset-balance">{totalBalance.toFixed(8)} {currency}</div>
                 <div className="asset-value">${value.toFixed(2)}</div>
-                <div className="asset-price">${data.usd.toLocaleString()}</div>
+                <div className="asset-price">${parseFloat(data.price).toLocaleString()}</div>
               </div>
             );
           })}

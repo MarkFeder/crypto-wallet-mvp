@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchTransactions } from '../redux/walletSlice';
+import { Wallet, WalletAddress } from '../types';
 import SendTransaction from './SendTransaction';
 
 interface WalletDetailProps {
-  wallet: any;
+  wallet: Wallet;
 }
 
 const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
@@ -36,8 +37,8 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
       <div className="addresses-section">
         <h3>Addresses & Balances</h3>
         <div className="addresses-grid">
-          {wallet.addresses.map((addr: any) => {
-            const price = prices[addr.currency]?.usd || 0;
+          {wallet.addresses.map((addr: WalletAddress) => {
+            const price = parseFloat(prices[addr.currency]?.price || '0');
             const value = parseFloat(addr.balance) * price;
 
             return (
