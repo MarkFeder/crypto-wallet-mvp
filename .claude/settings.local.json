@@ -8,7 +8,9 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: initialize git repository and add .gitignore\n\n- Initialize git repository for version control\n- Add comprehensive .gitignore for Node.js/React/TypeScript project\n- Ignore node_modules, build artifacts, environment files, and sensitive data\nEOF\n\\)\")",
       "Bash(git config:*)",
       "Bash(rm:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)"
     ]
   }
 }

@@ -1,5 +1,6 @@
+const crypto = require('crypto');
 const { ethers } = require('ethers');
-const db = require('../config/database');
+const db = require('../config/db');
 
 // Send transaction (simulated for MVP)
 exports.sendTransaction = async (req, res) => {
@@ -224,7 +225,7 @@ exports.swapTokens = async (req, res) => {
     }
     
     // Create transaction records
-    const txHash = '0x' + require('crypto').randomBytes(32).toString('hex');
+    const txHash = '0x' + crypto.randomBytes(32).toString('hex');
     await db.query(
       `INSERT INTO transactions (wallet_address, tx_hash, from_address, to_address, amount, token_symbol, status)
        VALUES ($1, $2, $3, $4, $5, $6, 'confirmed')`,

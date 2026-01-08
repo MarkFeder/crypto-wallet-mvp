@@ -1,4 +1,4 @@
-const db = require('../config/database');
+const db = require('../config/db');
 
 // Simulated price data for MVP
 const MOCK_PRICES = {
