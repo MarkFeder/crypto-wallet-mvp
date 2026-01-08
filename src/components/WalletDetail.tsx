@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchTransactions } from '../redux/walletSlice';
 import { Wallet, WalletAddress } from '../types';
+import { formatCurrency, formatCrypto, shortenAddress } from '../utils/format';
 import SendTransaction from './SendTransaction';
 
 interface WalletDetailProps {
@@ -53,11 +54,11 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                   </button>
                 </div>
                 <div className="address-balance">
-                  {parseFloat(addr.balance).toFixed(8)} {addr.currency}
+                  {formatCrypto(addr.balance)} {addr.currency}
                 </div>
-                <div className="address-value">${value.toFixed(2)}</div>
+                <div className="address-value">{formatCurrency(value)}</div>
                 <div className="address-text" title={addr.address}>
-                  {addr.address.slice(0, 12)}...{addr.address.slice(-8)}
+                  {shortenAddress(addr.address, 12, 8)}
                 </div>
                 <button
                   className="btn-copy"
@@ -89,12 +90,12 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                   <div className="tx-currency">{tx.currency}</div>
                   <div className="tx-amount">
                     {tx.type === 'send' ? '-' : '+'}
-                    {parseFloat(tx.amount).toFixed(8)}
+                    {formatCrypto(tx.amount)}
                   </div>
                 </div>
                 <div className="tx-address">
                   {tx.type === 'send' ? 'To: ' : 'From: '}
-                  {(tx.type === 'send' ? tx.to_address : tx.from_address)?.slice(0, 12)}...
+                  {shortenAddress((tx.type === 'send' ? tx.to_address : tx.from_address) || '', 12, 4)}
                 </div>
                 <div className="tx-status">
                   <span className={`status-badge ${tx.status}`}>{tx.status}</span>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { Wallet, WalletAddress, Price } from '../types';
+import { formatCurrency, formatCrypto, formatPercentage } from '../utils/format';
 
 interface PortfolioProps {
   wallets: Wallet[];
@@ -32,7 +33,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
       <div className="portfolio-stats">
         <div className="stat-card">
           <div className="stat-label">Total Value</div>
-          <div className="stat-value">${totalValue.toFixed(2)}</div>
+          <div className="stat-value">{formatCurrency(totalValue)}</div>
         </div>
 
         <div className="stat-card">
@@ -64,12 +65,12 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
                 <div className="asset-header">
                   <span className="asset-name">{currency}</span>
                   <span className={`asset-change ${data.change24h >= 0 ? 'positive' : 'negative'}`}>
-                    {data.change24h >= 0 ? '↑' : '↓'} {Math.abs(data.change24h).toFixed(2)}%
+                    {formatPercentage(data.change24h)}
                   </span>
                 </div>
-                <div className="asset-balance">{totalBalance.toFixed(8)} {currency}</div>
-                <div className="asset-value">${value.toFixed(2)}</div>
-                <div className="asset-price">${parseFloat(data.price).toLocaleString()}</div>
+                <div className="asset-balance">{formatCrypto(totalBalance)} {currency}</div>
+                <div className="asset-value">{formatCurrency(value)}</div>
+                <div className="asset-price">{formatCurrency(parseFloat(data.price))}</div>
               </div>
             );
           })}
