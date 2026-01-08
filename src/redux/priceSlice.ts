@@ -1,17 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api';
-
-interface PriceData {
-  usd: number;
-  change_24h: number;
-}
+import { apiService } from '../services/api';
+import { Price } from '../types';
+import { API_ENDPOINTS } from '../constants/config';
 
 interface PriceState {
-  prices: {
-    [key: string]: PriceData;
-  };
+  prices: Record<string, Price>;
   loading: boolean;
   error: string | null;
 }
@@ -23,8 +16,14 @@ const initialState: PriceState = {
 };
 
 export const fetchPrices = createAsyncThunk('price/fetchAll', async () => {
-  const response = await axios.get(`${API_URL}/prices`);
-  return response.data;
+  const response = await apiService.get<{ success: boolean; prices: Price[] }>(API_ENDPOINTS.PRICES.BASE);
+
+  const priceMap: Record<string, Price> = {};
+  response.prices.forEach((price) => {
+    priceMap[price.symbol] = price;
+  });
+
+  return priceMap;
 });
 
 const priceSlice = createSlice({

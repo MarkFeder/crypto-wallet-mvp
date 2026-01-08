@@ -1,88 +1,52 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { apiService } from '../services/api';
+import { Wallet, Transaction, WalletState } from '../types';
+import { API_ENDPOINTS } from '../constants/config';
 
-const API_URL = 'http://localhost:5000/api';
-
-interface Address {
-  currency: string;
-  address: string;
-  balance: string;
-}
-
-interface Wallet {
-  id: number;
-  name: string;
-  created_at: string;
-  addresses: Address[];
-}
-
-interface Transaction {
-  id: number;
-  currency: string;
-  type: string;
-  amount: string;
-  to_address: string;
-  from_address: string;
-  status: string;
-  created_at: string;
-}
-
-interface WalletState {
-  wallets: Wallet[];
+interface ExtendedWalletState extends WalletState {
   selectedWallet: Wallet | null;
   transactions: Transaction[];
-  loading: boolean;
-  error: string | null;
   mnemonic: string | null;
 }
 
-const initialState: WalletState = {
+const initialState: ExtendedWalletState = {
   wallets: [],
   selectedWallet: null,
+  currentWallet: null,
   transactions: [],
   loading: false,
   error: null,
   mnemonic: null,
 };
 
-const getAuthHeader = () => {
-  const token = localStorage.getItem('token');
-  return { headers: { Authorization: `Bearer ${token}` } };
-};
-
 export const createWallet = createAsyncThunk(
   'wallet/create',
   async (name: string) => {
-    const response = await axios.post(
-      `${API_URL}/wallets`,
-      { name },
-      getAuthHeader()
-    );
-    return response.data;
+    const response = await apiService.post<any>(API_ENDPOINTS.WALLETS.BASE, { name });
+    return response;
   }
 );
 
 export const fetchWallets = createAsyncThunk('wallet/fetchAll', async () => {
-  const response = await axios.get(`${API_URL}/wallets`, getAuthHeader());
-  return response.data.wallets;
+  const response = await apiService.get<{ wallets: Wallet[] }>(API_ENDPOINTS.WALLETS.BASE);
+  return response.wallets;
 });
 
 export const fetchWalletById = createAsyncThunk(
   'wallet/fetchById',
   async (id: number) => {
-    const response = await axios.get(`${API_URL}/wallets/${id}`, getAuthHeader());
-    return response.data.wallet;
+    const response = await apiService.get<{ wallet: Wallet }>(API_ENDPOINTS.WALLETS.BY_ID(id));
+    return response.wallet;
   }
 );
 
 export const fetchTransactions = createAsyncThunk(
   'wallet/fetchTransactions',
   async (walletId: number) => {
-    const response = await axios.get(
-      `${API_URL}/wallets/${walletId}/transactions`,
-      getAuthHeader()
+    const response = await apiService.get<{ transactions: Transaction[] }>(
+      API_ENDPOINTS.WALLETS.TRANSACTIONS(walletId)
     );
-    return response.data.transactions;
+    return response.transactions;
   }
 );
 
@@ -95,12 +59,11 @@ export const createTransaction = createAsyncThunk(
     amount: number;
     toAddress: string;
   }) => {
-    const response = await axios.post(
-      `${API_URL}/transactions`,
-      txData,
-      getAuthHeader()
+    const response = await apiService.post<{ transaction: Transaction }>(
+      '/transactions',
+      txData
     );
-    return response.data.transaction;
+    return response.transaction;
   }
 );
 

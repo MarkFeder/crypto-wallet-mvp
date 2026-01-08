@@ -1,24 +1,11 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api';
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-}
-
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  loading: boolean;
-  error: string | null;
-}
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { apiService } from '../services/api';
+import { AuthState, AuthResponse } from '../types';
+import { API_ENDPOINTS, STORAGE_KEYS } from '../constants/config';
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('token'),
+  token: localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN),
   loading: false,
   error: null,
 };
@@ -26,16 +13,16 @@ const initialState: AuthState = {
 export const register = createAsyncThunk(
   'auth/register',
   async (credentials: { username: string; email: string; password: string }) => {
-    const response = await axios.post(`${API_URL}/auth/register`, credentials);
-    return response.data;
+    const response = await apiService.post<AuthResponse>(API_ENDPOINTS.AUTH.REGISTER, credentials);
+    return response;
   }
 );
 
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }) => {
-    const response = await axios.post(`${API_URL}/auth/login`, credentials);
-    return response.data;
+    const response = await apiService.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
+    return response;
   }
 );
 
@@ -46,7 +33,8 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.removeItem('token');
+      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.USER);
     },
     clearError: (state) => {
       state.error = null;
@@ -62,7 +50,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -76,7 +64,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
