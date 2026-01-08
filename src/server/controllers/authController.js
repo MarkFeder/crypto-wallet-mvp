@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { JWT_SECRET } = require('../middleware/auth');
+const queries = require('../queries');
 
 const register = async (req, res) => {
   try {
@@ -13,10 +14,7 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await db.query(
-      'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email',
-      [username, email, hashedPassword]
-    );
+    const result = await db.query(queries.auth.createUser, [username, email, hashedPassword]);
 
     const user = result.rows[0];
     const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
@@ -36,7 +34,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await db.query(queries.auth.findUserByEmail, [email]);
     const user = result.rows[0];
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {

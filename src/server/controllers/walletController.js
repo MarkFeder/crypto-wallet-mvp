@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const cryptoUtils = require('../utils/crypto-utils');
+const queries = require('../queries');
 
 const createWallet = async (req, res) => {
   try {
@@ -8,25 +9,14 @@ const createWallet = async (req, res) => {
 
     const mnemonic = cryptoUtils.generateMnemonic();
 
-    const walletResult = await db.query(
-      'INSERT INTO wallets (user_id, name, encrypted_mnemonic) VALUES ($1, $2, $3) RETURNING id, name',
-      [userId, name, mnemonic]
-    );
-
+    const walletResult = await db.query(queries.wallet.createWallet, [userId, name, mnemonic]);
     const wallet = walletResult.rows[0];
 
     const btcAddress = cryptoUtils.deriveBitcoinAddress(mnemonic);
     const ethAddress = cryptoUtils.deriveEthereumAddress(mnemonic);
 
-    await db.query(
-      'INSERT INTO wallet_addresses (wallet_id, currency, address) VALUES ($1, $2, $3)',
-      [wallet.id, 'BTC', btcAddress.address]
-    );
-
-    await db.query(
-      'INSERT INTO wallet_addresses (wallet_id, currency, address) VALUES ($1, $2, $3)',
-      [wallet.id, 'ETH', ethAddress.address]
-    );
+    await db.query(queries.wallet.insertWalletAddress, [wallet.id, 'BTC', btcAddress.address]);
+    await db.query(queries.wallet.insertWalletAddress, [wallet.id, 'ETH', ethAddress.address]);
 
     res.status(201).json({
       wallet,
@@ -46,17 +36,11 @@ const getWallets = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const walletsResult = await db.query(
-      'SELECT id, name, created_at FROM wallets WHERE user_id = $1',
-      [userId]
-    );
+    const walletsResult = await db.query(queries.wallet.findWalletsByUserId, [userId]);
 
     const wallets = await Promise.all(
       walletsResult.rows.map(async (wallet) => {
-        const addressesResult = await db.query(
-          'SELECT currency, address, balance FROM wallet_addresses WHERE wallet_id = $1',
-          [wallet.id]
-        );
+        const addressesResult = await db.query(queries.wallet.findAddressesByWalletId, [wallet.id]);
 
         return {
           ...wallet,
@@ -77,10 +61,7 @@ const getWalletById = async (req, res) => {
     const userId = req.user.id;
     const walletId = req.params.id;
 
-    const walletResult = await db.query(
-      'SELECT * FROM wallets WHERE id = $1 AND user_id = $2',
-      [walletId, userId]
-    );
+    const walletResult = await db.query(queries.wallet.findWalletByIdAndUserId, [walletId, userId]);
 
     if (walletResult.rows.length === 0) {
       return res.status(404).json({ error: 'Wallet not found' });
@@ -88,10 +69,7 @@ const getWalletById = async (req, res) => {
 
     const wallet = walletResult.rows[0];
 
-    const addressesResult = await db.query(
-      'SELECT currency, address, balance FROM wallet_addresses WHERE wallet_id = $1',
-      [walletId]
-    );
+    const addressesResult = await db.query(queries.wallet.findAddressesByWalletId, [walletId]);
 
     res.json({
       wallet: {

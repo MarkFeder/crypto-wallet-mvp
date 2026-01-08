@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const queries = require('../queries');
 
 // Simulated price data for MVP
 const MOCK_PRICES = {
@@ -18,13 +19,7 @@ const MOCK_PRICES = {
 const updatePriceCache = async () => {
   try {
     for (const [symbol, data] of Object.entries(MOCK_PRICES)) {
-      await db.query(
-        `INSERT INTO price_cache (token_symbol, price_usd, last_updated)
-         VALUES ($1, $2, CURRENT_TIMESTAMP)
-         ON CONFLICT (token_symbol)
-         DO UPDATE SET price_usd = $2, last_updated = CURRENT_TIMESTAMP`,
-        [symbol, data.price]
-      );
+      await db.query(queries.price.upsertPriceCache, [symbol, data.price]);
     }
     console.log('✅ Price cache updated');
   } catch (error) {
@@ -42,14 +37,9 @@ setInterval(updatePriceCache, 30000);
 exports.getPrices = async (req, res) => {
   try {
     const symbols = req.query.symbols ? req.query.symbols.split(',') : Object.keys(MOCK_PRICES);
-    
-    const result = await db.query(
-      `SELECT token_symbol, price_usd, last_updated
-       FROM price_cache
-       WHERE token_symbol = ANY($1)`,
-      [symbols]
-    );
-    
+
+    const result = await db.query(queries.price.findPricesBySymbols, [symbols]);
+
     // Add change data from mock
     const pricesWithChange = result.rows.map(row => ({
       symbol: row.token_symbol,
@@ -57,7 +47,7 @@ exports.getPrices = async (req, res) => {
       change24h: MOCK_PRICES[row.token_symbol]?.change24h || 0,
       lastUpdated: row.last_updated
     }));
-    
+
     res.json({
       success: true,
       prices: pricesWithChange
@@ -75,21 +65,16 @@ exports.getPrices = async (req, res) => {
 exports.getTokenPrice = async (req, res) => {
   try {
     const { symbol } = req.params;
-    
-    const result = await db.query(
-      `SELECT token_symbol, price_usd, last_updated
-       FROM price_cache
-       WHERE token_symbol = $1`,
-      [symbol.toUpperCase()]
-    );
-    
+
+    const result = await db.query(queries.price.findPriceBySymbol, [symbol.toUpperCase()]);
+
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Price not found for token'
       });
     }
-    
+
     res.json({
       success: true,
       price: {
@@ -113,20 +98,17 @@ exports.getPriceHistory = async (req, res) => {
   try {
     const { symbol } = req.params;
     const days = parseInt(req.query.days) || 7;
-    
+
     // Get current price
-    const result = await db.query(
-      `SELECT price_usd FROM price_cache WHERE token_symbol = $1`,
-      [symbol.toUpperCase()]
-    );
-    
+    const result = await db.query(queries.price.findPriceBySymbol, [symbol.toUpperCase()]);
+
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Price not found for token'
       });
     }
-    
+
     const currentPrice = parseFloat(result.rows[0].price_usd);
     
     // Generate simulated historical data

@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { ethers } = require('ethers');
 const db = require('../config/db');
+const queries = require('../queries');
 
 // Send transaction (simulated for MVP)
 exports.sendTransaction = async (req, res) => {
@@ -23,19 +24,15 @@ exports.sendTransaction = async (req, res) => {
     }
     
     // Check if wallet exists and has sufficient balance
-    const assetResult = await db.query(
-      `SELECT balance FROM assets
-       WHERE wallet_address = $1 AND token_symbol = $2`,
-      [fromAddress, tokenSymbol]
-    );
-    
+    const assetResult = await db.query(queries.transaction.findAssetBalance, [fromAddress, tokenSymbol]);
+
     if (assetResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Asset not found in wallet'
       });
     }
-    
+
     const currentBalance = parseFloat(assetResult.rows[0].balance);
     if (currentBalance < parseFloat(amount)) {
       return res.status(400).json({
@@ -43,32 +40,28 @@ exports.sendTransaction = async (req, res) => {
         error: 'Insufficient balance'
       });
     }
-    
+
     // Generate simulated transaction hash
     const txHash = '0x' + crypto.randomBytes(32).toString('hex');
-    
+
     // Create transaction record
-    await db.query(
-      `INSERT INTO transactions (wallet_address, tx_hash, from_address, to_address, amount, token_symbol, status)
-       VALUES ($1, $2, $3, $4, $5, $6, 'pending')`,
-      [fromAddress, txHash, fromAddress, toAddress, amount, tokenSymbol]
-    );
-    
+    await db.query(queries.transaction.createTransaction, [
+      fromAddress,
+      txHash,
+      fromAddress,
+      toAddress,
+      amount,
+      tokenSymbol,
+      'pending',
+    ]);
+
     // Update sender balance
     const newBalance = (currentBalance - parseFloat(amount)).toString();
-    await db.query(
-      `UPDATE assets
-       SET balance = $1, last_updated = CURRENT_TIMESTAMP
-       WHERE wallet_address = $2 AND token_symbol = $3`,
-      [newBalance, fromAddress, tokenSymbol]
-    );
-    
+    await db.query(queries.transaction.updateAssetBalance, [newBalance, fromAddress, tokenSymbol]);
+
     // Simulate transaction confirmation after 2 seconds
     setTimeout(async () => {
-      await db.query(
-        `UPDATE transactions SET status = 'confirmed' WHERE tx_hash = $1`,
-        [txHash]
-      );
+      await db.query(queries.transaction.updateTransactionStatus, ['confirmed', txHash]);
     }, 2000);
     
     res.status(200).json({
@@ -97,15 +90,8 @@ exports.getTransactionHistory = async (req, res) => {
     const { address } = req.params;
     const limit = parseInt(req.query.limit) || 50;
     const offset = parseInt(req.query.offset) || 0;
-    
-    const result = await db.query(
-      `SELECT tx_hash, from_address, to_address, amount, token_symbol, status, timestamp
-       FROM transactions
-       WHERE wallet_address = $1
-       ORDER BY timestamp DESC
-       LIMIT $2 OFFSET $3`,
-      [address, limit, offset]
-    );
+
+    const result = await db.query(queries.transaction.findTransactionsByAddress, [address, limit, offset]);
     
     res.json({
       success: true,
@@ -125,11 +111,8 @@ exports.getTransactionHistory = async (req, res) => {
 exports.getTransactionDetails = async (req, res) => {
   try {
     const { txHash } = req.params;
-    
-    const result = await db.query(
-      `SELECT * FROM transactions WHERE tx_hash = $1`,
-      [txHash]
-    );
+
+    const result = await db.query(queries.transaction.findTransactionByHash, [txHash]);
     
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -165,10 +148,7 @@ exports.swapTokens = async (req, res) => {
     }
     
     // Check balance of fromToken
-    const fromAsset = await db.query(
-      `SELECT balance FROM assets WHERE wallet_address = $1 AND token_symbol = $2`,
-      [walletAddress, fromToken]
-    );
+    const fromAsset = await db.query(queries.transaction.findAssetBalance, [walletAddress, fromToken]);
     
     if (fromAsset.rows.length === 0 || parseFloat(fromAsset.rows[0].balance) < parseFloat(fromAmount)) {
       return res.status(400).json({
@@ -196,41 +176,30 @@ exports.swapTokens = async (req, res) => {
     
     // Update balances
     const newFromBalance = (parseFloat(fromAsset.rows[0].balance) - parseFloat(fromAmount)).toString();
-    
-    await db.query(
-      `UPDATE assets SET balance = $1, last_updated = CURRENT_TIMESTAMP
-       WHERE wallet_address = $2 AND token_symbol = $3`,
-      [newFromBalance, walletAddress, fromToken]
-    );
-    
+
+    await db.query(queries.transaction.updateAssetBalance, [newFromBalance, walletAddress, fromToken]);
+
     // Check if toToken asset exists, if not create it
-    const toAsset = await db.query(
-      `SELECT balance FROM assets WHERE wallet_address = $1 AND token_symbol = $2`,
-      [walletAddress, toToken]
-    );
-    
+    const toAsset = await db.query(queries.transaction.findAssetBalance, [walletAddress, toToken]);
+
     if (toAsset.rows.length === 0) {
-      await db.query(
-        `INSERT INTO assets (wallet_address, token_symbol, token_name, balance)
-         VALUES ($1, $2, $3, $4)`,
-        [walletAddress, toToken, toToken, toAmount]
-      );
+      await db.query(queries.transaction.insertAsset, [walletAddress, toToken, toToken, toAmount]);
     } else {
       const newToBalance = (parseFloat(toAsset.rows[0].balance) + parseFloat(toAmount)).toString();
-      await db.query(
-        `UPDATE assets SET balance = $1, last_updated = CURRENT_TIMESTAMP
-         WHERE wallet_address = $2 AND token_symbol = $3`,
-        [newToBalance, walletAddress, toToken]
-      );
+      await db.query(queries.transaction.updateAssetBalance, [newToBalance, walletAddress, toToken]);
     }
-    
+
     // Create transaction records
     const txHash = '0x' + crypto.randomBytes(32).toString('hex');
-    await db.query(
-      `INSERT INTO transactions (wallet_address, tx_hash, from_address, to_address, amount, token_symbol, status)
-       VALUES ($1, $2, $3, $4, $5, $6, 'confirmed')`,
-      [walletAddress, txHash, walletAddress, walletAddress, fromAmount, `${fromToken}->${toToken}`]
-    );
+    await db.query(queries.transaction.createTransaction, [
+      walletAddress,
+      txHash,
+      walletAddress,
+      walletAddress,
+      fromAmount,
+      `${fromToken}->${toToken}`,
+      'confirmed',
+    ]);
     
     res.json({
       success: true,
