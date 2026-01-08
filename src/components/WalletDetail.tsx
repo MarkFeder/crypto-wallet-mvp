@@ -1,0 +1,118 @@
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { fetchTransactions } from '../redux/walletSlice';
+import SendTransaction from './SendTransaction';
+
+interface WalletDetailProps {
+  wallet: any;
+}
+
+const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { transactions } = useSelector((state: RootState) => state.wallet);
+  const { prices } = useSelector((state: RootState) => state.price);
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState('');
+
+  useEffect(() => {
+    if (wallet) {
+      dispatch(fetchTransactions(wallet.id));
+    }
+  }, [wallet, dispatch]);
+
+  const handleSend = (currency: string) => {
+    setSelectedCurrency(currency);
+    setShowSendModal(true);
+  };
+
+  return (
+    <div className="wallet-detail">
+      <div className="wallet-detail-header">
+        <h2>{wallet.name}</h2>
+        <p className="wallet-id">Wallet ID: {wallet.id}</p>
+      </div>
+
+      <div className="addresses-section">
+        <h3>Addresses & Balances</h3>
+        <div className="addresses-grid">
+          {wallet.addresses.map((addr: any) => {
+            const price = prices[addr.currency]?.usd || 0;
+            const value = parseFloat(addr.balance) * price;
+
+            return (
+              <div key={addr.currency} className="address-card">
+                <div className="address-header">
+                  <span className="currency-badge">{addr.currency}</span>
+                  <button
+                    className="btn-small"
+                    onClick={() => handleSend(addr.currency)}
+                  >
+                    Send
+                  </button>
+                </div>
+                <div className="address-balance">
+                  {parseFloat(addr.balance).toFixed(8)} {addr.currency}
+                </div>
+                <div className="address-value">${value.toFixed(2)}</div>
+                <div className="address-text" title={addr.address}>
+                  {addr.address.slice(0, 12)}...{addr.address.slice(-8)}
+                </div>
+                <button
+                  className="btn-copy"
+                  onClick={() => {
+                    navigator.clipboard.writeText(addr.address);
+                    alert('Address copied to clipboard!');
+                  }}
+                >
+                  Copy Address
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="transactions-section">
+        <h3>Transaction History</h3>
+        {transactions.length === 0 ? (
+          <p className="empty-state">No transactions yet</p>
+        ) : (
+          <div className="transactions-list">
+            {transactions.map((tx) => (
+              <div key={tx.id} className="transaction-item">
+                <div className="tx-type">
+                  {tx.type === 'send' ? '📤' : '📥'} {tx.type.toUpperCase()}
+                </div>
+                <div className="tx-details">
+                  <div className="tx-currency">{tx.currency}</div>
+                  <div className="tx-amount">
+                    {tx.type === 'send' ? '-' : '+'}
+                    {parseFloat(tx.amount).toFixed(8)}
+                  </div>
+                </div>
+                <div className="tx-address">
+                  {tx.type === 'send' ? 'To: ' : 'From: '}
+                  {(tx.type === 'send' ? tx.to_address : tx.from_address)?.slice(0, 12)}...
+                </div>
+                <div className="tx-status">
+                  <span className={`status-badge ${tx.status}`}>{tx.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {showSendModal && (
+        <SendTransaction
+          walletId={wallet.id}
+          currency={selectedCurrency}
+          onClose={() => setShowSendModal(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default WalletDetail;

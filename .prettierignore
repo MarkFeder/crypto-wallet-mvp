@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+
+# Production
+dist
+build
+
+# Coverage
+coverage
+
+# Misc
+.DS_Store
+*.log
+*.tmp
+
+# Package manager files
+package-lock.json
+yarn.lock
+
+# IDE
+.idea
+.vscode

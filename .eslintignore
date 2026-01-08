@@ -1,0 +1,17 @@
+# Dependencies
+node_modules
+
+# Production
+dist
+build
+
+# Configuration files
+webpack.config.js
+.babelrc
+*.config.js
+
+# Coverage
+coverage
+
+# Misc
+*.min.js
