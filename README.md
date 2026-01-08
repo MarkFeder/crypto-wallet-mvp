@@ -141,10 +141,6 @@ crypto-wallet-mvp/
 - Implement NFT support
 - Create mobile app (React Native)
 
-## 👨‍💻 About This Project
-
-Created as a technical demonstration for the Exodus Senior Software Engineer position using the same tech stack mentioned in the job description.
-
 ## 📄 License
 
 MIT License - This is a demonstration project for educational purposes.
