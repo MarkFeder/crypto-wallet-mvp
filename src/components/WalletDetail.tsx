@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from '../redux/store';
 import { fetchTransactions } from '../redux/walletSlice';
 import { Wallet, WalletAddress } from '../types';
 import { formatCurrency, formatCrypto, shortenAddress } from '../utils/format';
+import { useClipboard } from '../hooks';
 import SendTransaction from './SendTransaction';
 
 interface WalletDetailProps {
@@ -16,6 +17,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
   const { prices } = useSelector((state: RootState) => state.price);
   const [showSendModal, setShowSendModal] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState('');
+  const { copyToClipboard } = useClipboard();
 
   useEffect(() => {
     if (wallet) {
@@ -62,10 +64,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                 </div>
                 <button
                   className="btn-copy"
-                  onClick={() => {
-                    navigator.clipboard.writeText(addr.address);
-                    alert('Address copied to clipboard!');
-                  }}
+                  onClick={() => copyToClipboard(addr.address)}
                 >
                   Copy Address
                 </button>

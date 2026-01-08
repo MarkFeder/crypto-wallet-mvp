@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { Wallet, WalletAddress, Price } from '../types';
 import { formatCurrency, formatCrypto, formatPercentage } from '../utils/format';
+import { usePortfolioValue } from '../hooks';
 
 interface PortfolioProps {
   wallets: Wallet[];
@@ -10,19 +11,7 @@ interface PortfolioProps {
 
 const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
   const { prices } = useSelector((state: RootState) => state.price);
-
-  const calculateTotalValue = () => {
-    let total = 0;
-    wallets.forEach((wallet) => {
-      wallet.addresses.forEach((addr: WalletAddress) => {
-        const price = parseFloat(prices[addr.currency]?.price || '0');
-        total += parseFloat(addr.balance) * price;
-      });
-    });
-    return total;
-  };
-
-  const totalValue = calculateTotalValue();
+  const totalValue = usePortfolioValue(wallets, prices);
 
   return (
     <div className="portfolio">
