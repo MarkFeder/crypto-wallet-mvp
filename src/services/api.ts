@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { API_BASE_URL, STORAGE_KEYS } from '../constants/config';
+import { API_BASE_URL } from '../constants/config';
+import { storageService } from './storageService';
 
 class ApiService {
   private client: AxiosInstance;
@@ -18,7 +19,7 @@ class ApiService {
   private setupInterceptors() {
     this.client.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+        const token = storageService.getAuthToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -33,8 +34,7 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-          localStorage.removeItem(STORAGE_KEYS.USER);
+          storageService.clearAuth();
           window.location.href = '/login';
         }
         return Promise.reject(error);

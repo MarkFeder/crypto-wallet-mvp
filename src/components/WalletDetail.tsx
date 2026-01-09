@@ -6,6 +6,7 @@ import { Wallet, WalletAddress } from '../types';
 import { APP_CONFIG } from '../constants/config';
 import { formatCurrency, formatCrypto, shortenAddress } from '../utils/format';
 import { useClipboard } from '../hooks';
+import { calculateAssetValue, safeParseFloat } from '../utils/calculations';
 import SendTransaction from './SendTransaction';
 
 interface WalletDetailProps {
@@ -42,8 +43,8 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
         <h3>Addresses & Balances</h3>
         <div className="addresses-grid">
           {wallet.addresses.map((addr: WalletAddress) => {
-            const price = parseFloat(prices[addr.currency]?.price || '0');
-            const value = parseFloat(addr.balance) * price;
+            const price = safeParseFloat(prices[addr.currency]?.price || '0');
+            const value = calculateAssetValue(addr.balance, price);
 
             return (
               <div key={addr.currency} className="address-card">

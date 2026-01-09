@@ -4,6 +4,7 @@ import { RootState } from '../redux/store';
 import { Wallet, WalletAddress, Price } from '../types';
 import { formatCurrency, formatCrypto, formatPercentage } from '../utils/format';
 import { usePortfolioValue } from '../hooks';
+import { calculateCurrencyBalance, calculateAssetValue, safeParseFloat } from '../utils/calculations';
 
 interface PortfolioProps {
   wallets: Wallet[];
@@ -42,12 +43,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
         <h3>Assets by Currency</h3>
         <div className="assets-grid">
           {Object.entries(prices).map(([currency, data]: [string, Price]) => {
-            const totalBalance = wallets.reduce((sum, wallet) => {
-              const addr = wallet.addresses.find((a: WalletAddress) => a.currency === currency);
-              return sum + (addr ? parseFloat(addr.balance) : 0);
-            }, 0);
-
-            const value = totalBalance * parseFloat(data.price);
+            const totalBalance = calculateCurrencyBalance(wallets, currency);
+            const value = calculateAssetValue(totalBalance, data.price);
 
             return (
               <div key={currency} className="asset-card">
@@ -59,7 +56,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
                 </div>
                 <div className="asset-balance">{formatCrypto(totalBalance)} {currency}</div>
                 <div className="asset-value">{formatCurrency(value)}</div>
-                <div className="asset-price">{formatCurrency(parseFloat(data.price))}</div>
+                <div className="asset-price">{formatCurrency(safeParseFloat(data.price))}</div>
               </div>
             );
           })}

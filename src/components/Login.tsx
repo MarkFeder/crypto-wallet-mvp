@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { login, register } from '../redux/authSlice';
+import { Button, Input } from './ui';
 
 const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,59 +39,53 @@ const Login: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="login-form">
           {isRegister && (
-            <div className="form-group">
-              <label>Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-                placeholder="Enter username"
-              />
-            </div>
+            <Input
+              type="text"
+              name="username"
+              label="Username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              placeholder="Enter username"
+            />
           )}
 
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter email"
-            />
-          </div>
+          <Input
+            type="email"
+            name="email"
+            label="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            placeholder="Enter email"
+          />
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Enter password"
-            />
-          </div>
+          <Input
+            type="password"
+            name="password"
+            label="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            placeholder="Enter password"
+          />
 
           {error && <div className="error-message">{error}</div>}
 
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <Button type="submit" disabled={loading}>
             {loading ? 'Processing...' : isRegister ? 'Create Account' : 'Sign In'}
-          </button>
+          </Button>
         </form>
 
         <div className="login-footer">
-          <button
-            className="btn-link"
+          <Button
+            variant="link"
             onClick={() => setIsRegister(!isRegister)}
           >
             {isRegister
               ? 'Already have an account? Sign In'
               : "Don't have an account? Register"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

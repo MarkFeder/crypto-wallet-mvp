@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiService } from '../services/api';
+import { storageService } from '../services/storageService';
 import { AuthState, AuthResponse } from '../types';
-import { API_ENDPOINTS, STORAGE_KEYS } from '../constants/config';
+import { API_ENDPOINTS } from '../constants/config';
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN),
+  token: storageService.getAuthToken(),
   loading: false,
   error: null,
 };
@@ -33,8 +34,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER);
+      storageService.clearAuth();
     },
     clearError: (state) => {
       state.error = null;
@@ -50,7 +50,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
+        storageService.setAuthToken(action.payload.token);
+        storageService.setUser(action.payload.user);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -64,7 +65,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
+        storageService.setAuthToken(action.payload.token);
+        storageService.setUser(action.payload.user);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;

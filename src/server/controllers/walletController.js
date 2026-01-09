@@ -1,6 +1,8 @@
 const db = require('../config/db');
 const cryptoUtils = require('../utils/crypto-utils');
 const queries = require('../queries');
+const { sendSuccess, notFound, serverError } = require('../utils/apiResponse');
+const { HTTP_STATUS } = require('../../constants/serverConfig');
 
 const createWallet = async (req, res) => {
   try {
@@ -18,17 +20,16 @@ const createWallet = async (req, res) => {
     await db.query(queries.wallet.insertWalletAddress, [wallet.id, 'BTC', btcAddress.address]);
     await db.query(queries.wallet.insertWalletAddress, [wallet.id, 'ETH', ethAddress.address]);
 
-    res.status(201).json({
+    return sendSuccess(res, {
       wallet,
       mnemonic,
       addresses: {
         BTC: btcAddress.address,
         ETH: ethAddress.address,
       },
-    });
+    }, HTTP_STATUS.CREATED);
   } catch (error) {
-    console.error('Wallet creation error:', error);
-    res.status(500).json({ error: 'Failed to create wallet' });
+    return serverError(res, 'Failed to create wallet', error);
   }
 };
 
@@ -49,10 +50,9 @@ const getWallets = async (req, res) => {
       })
     );
 
-    res.json({ wallets });
+    return sendSuccess(res, { wallets });
   } catch (error) {
-    console.error('Get wallets error:', error);
-    res.status(500).json({ error: 'Failed to fetch wallets' });
+    return serverError(res, 'Failed to fetch wallets', error);
   }
 };
 
@@ -64,14 +64,14 @@ const getWalletById = async (req, res) => {
     const walletResult = await db.query(queries.wallet.findWalletByIdAndUserId, [walletId, userId]);
 
     if (walletResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Wallet not found' });
+      return notFound(res, 'Wallet not found');
     }
 
     const wallet = walletResult.rows[0];
 
     const addressesResult = await db.query(queries.wallet.findAddressesByWalletId, [walletId]);
 
-    res.json({
+    return sendSuccess(res, {
       wallet: {
         id: wallet.id,
         name: wallet.name,
@@ -80,8 +80,7 @@ const getWalletById = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get wallet error:', error);
-    res.status(500).json({ error: 'Failed to fetch wallet' });
+    return serverError(res, 'Failed to fetch wallet', error);
   }
 };
 

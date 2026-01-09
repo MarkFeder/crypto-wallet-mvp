@@ -3,13 +3,15 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { JWT_SECRET } = require('../middleware/auth');
 const queries = require('../queries');
+const { sendSuccess, badRequest, unauthorized, serverError } = require('../utils/apiResponse');
+const { HTTP_STATUS } = require('../../constants/serverConfig');
 
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).json({ error: 'All fields are required' });
+      return badRequest(res, 'All fields are required');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,14 +21,12 @@ const register = async (req, res) => {
     const user = result.rows[0];
     const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
 
-    res.status(201).json({ user, token });
+    return sendSuccess(res, { user, token }, HTTP_STATUS.CREATED);
   } catch (error) {
     if (error.code === '23505') {
-      res.status(400).json({ error: 'Username or email already exists' });
-    } else {
-      console.error('Registration error:', error);
-      res.status(500).json({ error: 'Registration failed' });
+      return badRequest(res, 'Username or email already exists');
     }
+    return serverError(res, 'Registration failed', error);
   }
 };
 
@@ -38,18 +38,17 @@ const login = async (req, res) => {
     const user = result.rows[0];
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return unauthorized(res, 'Invalid credentials');
     }
 
     const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
 
-    res.json({
+    return sendSuccess(res, {
       user: { id: user.id, username: user.username, email: user.email },
       token,
     });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Login failed' });
+    return serverError(res, 'Login failed', error);
   }
 };
 
