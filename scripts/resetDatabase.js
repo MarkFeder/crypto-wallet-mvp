@@ -45,8 +45,9 @@ async function resetDatabase() {
     await client.query('DROP TABLE IF EXISTS wallet_addresses CASCADE;');
     await client.query('DROP TABLE IF EXISTS wallets CASCADE;');
     await client.query('DROP TABLE IF EXISTS users CASCADE;');
+    await client.query('DROP TABLE IF EXISTS price_cache CASCADE;');
 
-    console.log('✅ Tables dropped successfully!');
+    console.log('✅ All tables dropped successfully!');
 
     // Read and execute schema
     const schemaPath = path.join(__dirname, '../src/server/config/schema.sql');
