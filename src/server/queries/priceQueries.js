@@ -34,7 +34,7 @@ const priceQueries = {
   `,
 
   // Delete stale prices (older than X hours)
-  deleteStaleP rices: `
+  deleteStalePrices: `
     DELETE FROM price_cache
     WHERE last_updated < NOW() - INTERVAL '24 hours'
   `,

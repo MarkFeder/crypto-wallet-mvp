@@ -85,7 +85,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
             {transactions.map((tx) => (
               <div key={tx.id} className="transaction-item">
                 <div className="tx-type">
-                  {tx.type === 'send' ? '📤' : '📥'} {tx.type.toUpperCase()}
+                  {tx.type === 'send' ? '📤' : '📥'} {tx.type?.toUpperCase() || 'UNKNOWN'}
                 </div>
                 <div className="tx-details">
                   <div className="tx-currency">{tx.currency}</div>
