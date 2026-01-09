@@ -1,145 +1,216 @@
 # CryptoWallet MVP
 
-A full-stack cryptocurrency wallet application built with the Exodus tech stack, featuring wallet creation, token swapping, sending/receiving crypto, and portfolio tracking.
-
-## 🎯 Purpose
-
-This project was built as an MVP to demonstrate proficiency with the Exodus technology stack for a job application. It showcases:
-
-- **Frontend**: React + Redux for state management
-- **Backend**: Node.js/Express API
-- **Database**: PostgreSQL for data persistence
-- **Build Tools**: Webpack + Babel
-- **Crypto Libraries**: ethers.js, bip39
+A full-stack cryptocurrency wallet application featuring multi-currency support, wallet management, token swapping, and real-time portfolio tracking.
 
 ## ✨ Features
 
-### Core Functionality
-- 🔐 **Wallet Creation**: Generate new wallets with 12-word seed phrases
-- 📥 **Wallet Import**: Import existing wallets using mnemonic phrases
-- 💰 **Portfolio View**: Track multiple tokens (ETH, BTC, USDT) with real-time balances
-- 💸 **Send Transactions**: Send crypto to other addresses
-- 🔄 **Token Swapping**: Exchange between different cryptocurrencies
-- 📊 **Transaction History**: View all past transactions
-- 💱 **Live Prices**: Real-time cryptocurrency price tracking
+### Wallet Management
+- 🔐 **Create Wallets**: Generate new wallets with BIP39 12-word seed phrases
+- 📥 **Multi-Currency Support**: BTC, ETH, USDT, USDC, BNB, SOL, XRP, ADA, DOGE, DOT
+- 💼 **Multiple Wallets**: Manage multiple wallets per account
+- 📊 **Portfolio Overview**: Real-time total portfolio value across all assets
 
-### Security Features
-- 🔒 AES-256-GCM encryption for private keys and mnemonics
-- 🛡️ Helmet.js for HTTP security headers
-- ⏱️ Rate limiting to prevent abuse
-- 🔑 Client-side seed phrase storage
+### Transactions
+- 💸 **Send Crypto**: Send transactions to any address
+- 🔄 **Token Swapping**: Exchange between cryptocurrencies with 0.5% fee
+- 📈 **Transaction History**: View complete transaction history per wallet
+- ⏱️ **Real-time Updates**: Live transaction status tracking
 
-## 🚀 Getting Started
+### User Experience
+- 💱 **Live Price Data**: Real-time cryptocurrency prices with 24h changes
+- 🎨 **Modern UI**: Clean, responsive interface with reusable components
+- 🔒 **Secure Authentication**: JWT-based auth with bcrypt password hashing
+- 📱 **Mobile-Friendly**: Responsive design for all screen sizes
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- PostgreSQL (v12 or higher)
-- npm or yarn
+- **Node.js** (v16+)
+- **PostgreSQL** (v12+)
+- **npm** or **yarn**
 
 ### Installation
 
-1. **Install Dependencies**
 ```bash
+# 1. Clone and install
+git clone <repository-url>
+cd crypto-wallet-mvp
 npm install
-```
 
-2. **Setup PostgreSQL Database**
-```bash
-# Create database
-createdb crypto_wallet
-
-# Or using psql
-psql -U postgres
-CREATE DATABASE crypto_wallet;
-```
-
-3. **Configure Environment Variables**
-```bash
-# Copy the example env file
+# 2. Setup environment
 cp .env.example .env
+# Edit .env with your PostgreSQL credentials
 
-# Generate an encryption key:
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# 3. Setup database with test data (one command!)
+npm run setup:db
 
-# Update .env with your settings
+# 4. Start the application
+npm run dev
 ```
 
-4. **Initialize Database Tables**
+**That's it!** 🎉
+
+Open http://localhost:3000 and login with:
+- **Email**: `admin@test.com`
+- **Password**: `admin123`
+
+## 📜 Available Scripts
+
+### Development
 ```bash
-npm run init:db
+npm run dev          # Start both client and server
+npm run dev:client   # Start React dev server (port 3000)
+npm run dev:server   # Start Node.js server (port 5000)
 ```
 
-5. **Start Development Servers**
-
-Terminal 1 - Backend:
+### Database Management
 ```bash
-npm run dev:server
+npm run setup:db     # 🌟 Drop, recreate & seed (recommended)
+npm run test:db      # Test PostgreSQL connection
+npm run init:db      # Initialize database schema only
+npm run seed         # Add test data to existing database
+npm run reset:db     # Drop & recreate (asks confirmation)
 ```
 
-Terminal 2 - Frontend:
+### Build & Production
 ```bash
-npm run dev:client
+npm run build        # Build production bundle
+npm run start        # Start production server
 ```
 
-The app will be available at:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:3001
+### Code Quality
+```bash
+npm run lint         # Check code style
+npm run lint:fix     # Fix linting issues
+npm run format       # Format code with Prettier
+npm run type-check   # TypeScript type checking
+```
 
-## 🔧 Tech Stack Alignment with Exodus
+## 🏗️ Tech Stack
 
-Based on the Exodus Senior Software Engineer job posting:
+### Frontend
+- **React 19** - UI library
+- **Redux Toolkit** - State management
+- **TypeScript** - Type safety
+- **Webpack 5** - Module bundler
+- **Axios** - HTTP client
 
-### Required Technologies
-✅ **JavaScript/Node.js** - Backend API and server
-✅ **React** - Frontend UI components
-✅ **Redux** - State management
-✅ **PostgreSQL** - Primary database
-✅ **Webpack** - Build tooling and bundling
-✅ **Babel** - JavaScript transpilation
-✅ **NPM** - Package management
+### Backend
+- **Node.js** - Runtime
+- **Express 5** - Web framework
+- **PostgreSQL** - Database
+- **JWT** - Authentication
+- **bcryptjs** - Password hashing
 
-### Plus Points Demonstrated
-✅ **Cryptographic protocols** - Wallet generation, key management
-✅ **Security** - Encryption, secure storage
-✅ **Performance** - Efficient state updates
+### Crypto Libraries
+- **ethers.js** - Ethereum wallet operations
+- **bitcoinjs-lib** - Bitcoin wallet operations
+- **bip39** - Mnemonic generation
+- **bip32** - HD wallet derivation
 
-## 📚 Project Structure
+## 📁 Project Structure
 
 ```
 crypto-wallet-mvp/
 ├── src/
-│   ├── client/              # React frontend
-│   │   ├── components/      # React components
-│   │   ├── redux/          # Redux state management
-│   │   └── styles/         # CSS styles
-│   └── server/             # Node.js backend
-│       ├── config/         # Database config
-│       ├── controllers/    # Business logic
-│       └── routes/         # API routes
-├── public/                 # Static files
-├── scripts/               # Utility scripts
-└── package.json           # Dependencies
-
+│   ├── components/          # React components
+│   │   ├── ui/             # Reusable UI components
+│   │   ├── Portfolio.tsx
+│   │   ├── WalletDetail.tsx
+│   │   └── ...
+│   ├── redux/              # Redux store & slices
+│   ├── services/           # API services
+│   │   ├── api.ts
+│   │   └── storageService.ts
+│   ├── utils/              # Utility functions
+│   │   ├── calculations.ts
+│   │   ├── format.ts
+│   │   └── validation.ts
+│   ├── constants/          # Configuration
+│   │   ├── config.ts
+│   │   └── serverConfig.js
+│   ├── hooks/              # Custom React hooks
+│   ├── types/              # TypeScript types
+│   ├── server/             # Backend
+│   │   ├── controllers/    # Route handlers
+│   │   ├── services/       # Business logic
+│   │   ├── utils/          # Server utilities
+│   │   ├── queries/        # SQL queries
+│   │   └── config/         # Server config
+│   └── index.tsx           # App entry point
+├── scripts/                # Database scripts
+│   ├── setupDatabase.js    # Complete setup
+│   ├── seedTestUser.js     # Test data
+│   └── testConnection.js   # Connection test
+└── public/                 # Static assets
 ```
 
-## 🔐 Security Notes
+## 🗄️ Database Schema
 
-⚠️ **This is an MVP for demonstration purposes**
+### Tables
+- **users** - User accounts with authentication
+- **wallets** - User wallets with encrypted mnemonics
+- **wallet_addresses** - Multi-currency addresses per wallet
+- **transactions** - Transaction history
+- **price_cache** - Cryptocurrency price data
 
-- Private keys are encrypted but stored in the database
-- Seed phrases should never be transmitted over network
-- Add 2FA and additional authentication layers for production
-- Use environment-specific encryption keys
+## 🔐 Security Features
 
-## 🚧 Future Enhancements
+- ✅ **Password Hashing**: bcrypt with salt rounds
+- ✅ **JWT Authentication**: Secure token-based auth
+- ✅ **Input Validation**: Server & client-side validation
+- ✅ **SQL Injection Prevention**: Parameterized queries
+- ✅ **Environment Variables**: Sensitive data in .env
+- ✅ **Error Handling**: Consistent error responses
 
-- Add support for more cryptocurrencies
-- Integrate with real blockchain networks
-- Implement hardware wallet support
-- Add DApp browser functionality
-- Implement NFT support
-- Create mobile app (React Native)
+⚠️ **Note**: This is an MVP for demonstration. For production:
+- Add rate limiting
+- Implement HTTPS
+- Add 2FA authentication
+- Use hardware security modules for key storage
+- Implement proper key encryption at rest
+
+## 🎯 Code Quality Improvements
+
+Recent refactoring focused on maintainability:
+
+### Extracted Concerns
+- ✅ **Configuration**: Centralized constants and config
+- ✅ **API Responses**: Reusable error/success handlers
+- ✅ **Storage Service**: Centralized localStorage operations
+- ✅ **Calculations**: Safe number parsing and asset value calculations
+- ✅ **Business Logic**: Extracted swap service from controllers
+
+### Benefits
+- 🔄 Reduced code duplication (100+ lines)
+- 📦 Better separation of concerns
+- 🧪 More testable code
+- 🛡️ Safer number handling (prevents NaN errors)
+- 📖 Consistent patterns across codebase
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 Test Credentials
+
+After running `npm run setup:db`, use these credentials:
+
+- **Email**: admin@test.com
+- **Password**: admin123
+
+**Sample Data Includes:**
+- 2 wallets (Main Wallet & Trading Wallet)
+- Multiple cryptocurrencies with balances
+- Sample transaction history
+- Live price data for 10 tokens
 
 ## 📄 License
 

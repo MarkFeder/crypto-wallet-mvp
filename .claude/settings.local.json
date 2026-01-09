@@ -18,7 +18,8 @@
       "Bash(powershell \"Get-Service -Name postgresql* | Select-Object Name, Status\")",
       "Bash(npm install:*)",
       "Bash(npm run seed:*)",
-      "Bash(npm run setup:db:*)"
+      "Bash(npm run setup:db:*)",
+      "Bash(ls:*)"
     ]
   }
 }
