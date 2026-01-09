@@ -38,6 +38,15 @@ CREATE TABLE IF NOT EXISTS transactions (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS price_cache (
+  id SERIAL PRIMARY KEY,
+  token_symbol VARCHAR(10) UNIQUE NOT NULL,
+  price_usd DECIMAL(20, 8) NOT NULL,
+  change_24h DECIMAL(10, 2) DEFAULT 0,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX idx_wallet_user ON wallets(user_id);
 CREATE INDEX idx_wallet_addresses_wallet ON wallet_addresses(wallet_id);
 CREATE INDEX idx_transactions_wallet ON transactions(wallet_id);
+CREATE INDEX idx_price_cache_symbol ON price_cache(token_symbol);
