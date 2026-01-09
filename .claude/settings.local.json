@@ -15,7 +15,9 @@
       "Bash(git push:*)",
       "Bash(npm run build:*)",
       "Bash(where:*)",
-      "Bash(powershell \"Get-Service -Name postgresql* | Select-Object Name, Status\")"
+      "Bash(powershell \"Get-Service -Name postgresql* | Select-Object Name, Status\")",
+      "Bash(npm install:*)",
+      "Bash(npm run seed:*)"
     ]
   }
 }
