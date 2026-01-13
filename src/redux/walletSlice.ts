@@ -7,6 +7,7 @@ interface ExtendedWalletState extends WalletState {
   selectedWallet: Wallet | null;
   transactions: Transaction[];
   mnemonic: string | null;
+  lastFetched: number | null;
 }
 
 const initialState: ExtendedWalletState = {
@@ -17,6 +18,7 @@ const initialState: ExtendedWalletState = {
   loading: false,
   error: null,
   mnemonic: null,
+  lastFetched: null,
 };
 
 export const createWallet = createAsyncThunk(
@@ -80,26 +82,72 @@ const walletSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // createWallet
+      .addCase(createWallet.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(createWallet.fulfilled, (state, action) => {
         state.loading = false;
         state.mnemonic = action.payload.mnemonic;
         state.wallets.push(action.payload.wallet);
       })
+      .addCase(createWallet.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to create wallet';
+      })
+      // fetchWallets
+      .addCase(fetchWallets.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchWallets.fulfilled, (state, action) => {
         state.loading = false;
         state.wallets = action.payload;
+        state.lastFetched = Date.now();
+      })
+      .addCase(fetchWallets.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch wallets';
+      })
+      // fetchWalletById
+      .addCase(fetchWalletById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchWalletById.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedWallet = action.payload;
       })
+      .addCase(fetchWalletById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch wallet';
+      })
+      // fetchTransactions
+      .addCase(fetchTransactions.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchTransactions.fulfilled, (state, action) => {
         state.loading = false;
         state.transactions = action.payload;
       })
+      .addCase(fetchTransactions.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch transactions';
+      })
+      // createTransaction
+      .addCase(createTransaction.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(createTransaction.fulfilled, (state, action) => {
         state.loading = false;
         state.transactions.unshift(action.payload);
+      })
+      .addCase(createTransaction.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to create transaction';
       });
   },
 });
