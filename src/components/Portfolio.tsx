@@ -5,6 +5,7 @@ import { Wallet, WalletAddress, Price } from '../types';
 import { formatCurrency, formatCrypto, formatPercentage } from '../utils/format';
 import { usePortfolioValue } from '../hooks';
 import { calculateCurrencyBalance, calculateAssetValue, safeParseFloat } from '../utils/calculations';
+import { strings } from '../locales';
 
 interface PortfolioProps {
   wallets: Wallet[];
@@ -30,28 +31,28 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
   return (
     <div className="portfolio">
       <div className="portfolio-header">
-        <h2>Portfolio Overview</h2>
+        <h2>{strings.portfolio.overview}</h2>
       </div>
 
       <div className="portfolio-stats">
         <div className="stat-card">
-          <div className="stat-label">Total Value</div>
+          <div className="stat-label">{strings.portfolio.totalValue}</div>
           <div className="stat-value">{formatCurrency(totalValue)}</div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-label">Total Wallets</div>
+          <div className="stat-label">{strings.portfolio.totalWallets}</div>
           <div className="stat-value">{wallets.length}</div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-label">Active Assets</div>
+          <div className="stat-label">{strings.portfolio.activeAssets}</div>
           <div className="stat-value">{totalAssets}</div>
         </div>
       </div>
 
       <div className="assets-section">
-        <h3>Assets by Currency</h3>
+        <h3>{strings.portfolio.assetsByCurrency}</h3>
         <div className="assets-grid">
           {currencyBreakdown.map(({ currency, data, totalBalance, value }) => (
             <div key={currency} className="asset-card">
@@ -71,7 +72,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
 
       {wallets.length === 0 && (
         <div className="empty-portfolio">
-          <p>🔐 Create your first wallet to get started!</p>
+          <p>🔐 {strings.wallet.createFirstWallet}</p>
         </div>
       )}
     </div>

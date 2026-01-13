@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { login, register } from '../redux/authSlice';
 import { Button, Input } from './ui';
+import { strings } from '../locales';
 
 const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,8 +34,8 @@ const Login: React.FC = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>🔐 CryptoVault</h1>
-          <p>Your Gateway to Multi-Chain Crypto Management</p>
+          <h1>🔐 {strings.app.name}</h1>
+          <p>{strings.app.tagline}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
@@ -42,38 +43,38 @@ const Login: React.FC = () => {
             <Input
               type="text"
               name="username"
-              label="Username"
+              label={strings.auth.username}
               value={formData.username}
               onChange={handleChange}
               required
-              placeholder="Enter username"
+              placeholder={strings.auth.usernamePlaceholder}
             />
           )}
 
           <Input
             type="email"
             name="email"
-            label="Email"
+            label={strings.auth.email}
             value={formData.email}
             onChange={handleChange}
             required
-            placeholder="Enter email"
+            placeholder={strings.auth.emailPlaceholder}
           />
 
           <Input
             type="password"
             name="password"
-            label="Password"
+            label={strings.auth.password}
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Enter password"
+            placeholder={strings.auth.passwordPlaceholder}
           />
 
           {error && <div className="error-message">{error}</div>}
 
           <Button type="submit" disabled={loading}>
-            {loading ? 'Processing...' : isRegister ? 'Create Account' : 'Sign In'}
+            {loading ? strings.auth.processing : isRegister ? strings.auth.signUp : strings.auth.signIn}
           </Button>
         </form>
 
@@ -83,8 +84,8 @@ const Login: React.FC = () => {
             onClick={() => setIsRegister(!isRegister)}
           >
             {isRegister
-              ? 'Already have an account? Sign In'
-              : "Don't have an account? Register"}
+              ? strings.auth.alreadyHaveAccount
+              : strings.auth.dontHaveAccount}
           </Button>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { Button, Input, Modal } from './ui';
 import { useClipboard } from '../hooks';
+import { strings } from '../locales';
 
 interface CreateWalletProps {
   onClose: () => void;
@@ -34,37 +35,36 @@ const CreateWallet: React.FC<CreateWalletProps> = ({ onClose, onCreate }) => {
     <Modal isOpen={true} onClose={onClose}>
       {step === 'name' ? (
         <>
-          <h2>Create New Wallet</h2>
+          <h2>{strings.wallet.createNewWallet}</h2>
           <p className="modal-description">
-            Give your wallet a name to help you identify it.
+            {strings.wallet.walletNameDescription}
           </p>
 
           <div className="form-group">
-            <label>Wallet Name</label>
+            <label>{strings.wallet.walletName}</label>
             <input
               type="text"
               value={walletName}
               onChange={(e) => setWalletName(e.target.value)}
-              placeholder="e.g., My Main Wallet"
+              placeholder={strings.wallet.walletNamePlaceholder}
               autoFocus
             />
           </div>
 
           <div className="modal-actions">
             <button onClick={onClose} className="btn-secondary">
-              Cancel
+              {strings.common.cancel}
             </button>
             <button onClick={handleCreate} className="btn-primary">
-              Create Wallet
+              {strings.wallet.createWallet}
             </button>
           </div>
         </>
       ) : (
         <>
-          <h2>🔑 Save Your Recovery Phrase</h2>
+          <h2>🔑 {strings.wallet.recoveryPhrase.title}</h2>
           <div className="warning-box">
-            ⚠️ Write down these 12 words in order and keep them safe. You'll need
-            them to recover your wallet if you lose access.
+            ⚠️ {strings.wallet.recoveryPhrase.warning}
           </div>
 
           <div className="mnemonic-box">
@@ -77,12 +77,12 @@ const CreateWallet: React.FC<CreateWalletProps> = ({ onClose, onCreate }) => {
           </div>
 
           <button onClick={handleCopy} className="btn-copy-mnemonic">
-            {copied ? '✓ Copied!' : '📋 Copy to Clipboard'}
+            {copied ? `✓ ${strings.common.copied}` : `📋 ${strings.common.copyToClipboard}`}
           </button>
 
           <div className="modal-actions">
             <button onClick={onClose} className="btn-primary full-width">
-              I've Saved My Recovery Phrase
+              {strings.wallet.recoveryPhrase.saved}
             </button>
           </div>
         </>

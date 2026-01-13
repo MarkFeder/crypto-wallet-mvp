@@ -8,6 +8,7 @@ import { formatCurrency, formatCrypto, shortenAddress } from '../utils/format';
 import { useClipboard } from '../hooks';
 import { calculateAssetValue, safeParseFloat } from '../utils/calculations';
 import SendTransaction from './SendTransaction';
+import { strings } from '../locales';
 
 interface WalletDetailProps {
   wallet: Wallet;
@@ -36,11 +37,11 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
     <div className="wallet-detail">
       <div className="wallet-detail-header">
         <h2>{wallet.name}</h2>
-        <p className="wallet-id">Wallet ID: {wallet.id}</p>
+        <p className="wallet-id">{strings.wallet.walletId(wallet.id)}</p>
       </div>
 
       <div className="addresses-section">
-        <h3>Addresses & Balances</h3>
+        <h3>{strings.wallet.addressesAndBalances}</h3>
         <div className="addresses-grid">
           {wallet.addresses.map((addr: WalletAddress) => {
             const price = safeParseFloat(prices[addr.currency]?.price || '0');
@@ -54,7 +55,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                     className="btn-small"
                     onClick={() => handleSend(addr.currency)}
                   >
-                    Send
+                    {strings.transaction.send}
                   </button>
                 </div>
                 <div className="address-balance">
@@ -68,7 +69,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                   className="btn-copy"
                   onClick={() => copyToClipboard(addr.address)}
                 >
-                  Copy Address
+                  {strings.wallet.copyAddress}
                 </button>
               </div>
             );
@@ -77,15 +78,15 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
       </div>
 
       <div className="transactions-section">
-        <h3>Transaction History</h3>
+        <h3>{strings.transaction.transactionHistory}</h3>
         {transactions.length === 0 ? (
-          <p className="empty-state">No transactions yet</p>
+          <p className="empty-state">{strings.transaction.noTransactionsYet}</p>
         ) : (
           <div className="transactions-list">
             {transactions.map((tx) => (
               <div key={tx.id} className="transaction-item">
                 <div className="tx-type">
-                  {tx.type === 'send' ? '📤' : '📥'} {tx.type?.toUpperCase() || 'UNKNOWN'}
+                  {tx.type === 'send' ? '📤' : '📥'} {tx.type?.toUpperCase() || strings.common.unknown}
                 </div>
                 <div className="tx-details">
                   <div className="tx-currency">{tx.currency}</div>
@@ -95,7 +96,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                   </div>
                 </div>
                 <div className="tx-address">
-                  {tx.type === 'send' ? 'To: ' : 'From: '}
+                  {tx.type === 'send' ? strings.transaction.to : strings.transaction.from}
                   {shortenAddress(
                     (tx.type === 'send' ? tx.to_address : tx.from_address) || '',
                     APP_CONFIG.ADDRESS_DISPLAY.TRANSACTION_START_LENGTH,

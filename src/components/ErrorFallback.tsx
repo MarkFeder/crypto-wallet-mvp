@@ -1,4 +1,5 @@
 import React from 'react';
+import { strings } from '../locales';
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -9,16 +10,16 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onReset }) => {
   return (
     <div className="error-fallback">
       <div className="error-content">
-        <h2>Something went wrong</h2>
+        <h2>{strings.errors.somethingWentWrong}</h2>
         <p className="error-message">
-          {error?.message || 'An unexpected error occurred'}
+          {error?.message || strings.errors.unexpectedError}
         </p>
         <div className="error-actions">
           <button onClick={onReset} className="btn-primary">
-            Try Again
+            {strings.errors.tryAgain}
           </button>
           <button onClick={() => window.location.reload()} className="btn-secondary">
-            Reload Page
+            {strings.errors.reloadPage}
           </button>
         </div>
       </div>

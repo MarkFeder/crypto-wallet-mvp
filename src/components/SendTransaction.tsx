@@ -4,6 +4,7 @@ import { AppDispatch } from '../redux/store';
 import { createTransaction } from '../redux/walletSlice';
 import { Modal } from './ui';
 import { useToast } from '../hooks';
+import { strings } from '../locales';
 
 interface SendTransactionProps {
   walletId: number;
@@ -24,7 +25,7 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
 
   const handleSend = async () => {
     if (!toAddress || !amount) {
-      toast.warning('Please fill in all fields');
+      toast.warning(strings.validation.fillAllFields);
       return;
     }
 
@@ -39,10 +40,10 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
           toAddress,
         })
       );
-      toast.success('Transaction sent successfully!');
+      toast.success(strings.toast.transactionSuccess);
       onClose();
     } catch (error) {
-      toast.error('Failed to send transaction');
+      toast.error(strings.toast.transactionFailed);
     } finally {
       setLoading(false);
     }
@@ -50,39 +51,39 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
 
   return (
     <Modal isOpen={true} onClose={onClose}>
-      <h2>Send {currency}</h2>
+      <h2>{strings.transaction.sendCurrency(currency)}</h2>
 
       <div className="form-group">
-        <label>Recipient Address</label>
+        <label>{strings.transaction.recipientAddress}</label>
         <input
           type="text"
           value={toAddress}
           onChange={(e) => setToAddress(e.target.value)}
-          placeholder="Enter recipient address"
+          placeholder={strings.transaction.recipientAddressPlaceholder}
         />
       </div>
 
       <div className="form-group">
-        <label>Amount ({currency})</label>
+        <label>{strings.transaction.amountWithCurrency(currency)}</label>
         <input
           type="number"
           step="0.00000001"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder="0.00000000"
+          placeholder={strings.transaction.amountPlaceholder}
         />
       </div>
 
       <div className="info-box">
-        ℹ️ This is a demo transaction. In production, this would broadcast to the blockchain.
+        ℹ️ {strings.transaction.demoNotice}
       </div>
 
       <div className="modal-actions">
         <button onClick={onClose} className="btn-secondary" disabled={loading}>
-          Cancel
+          {strings.common.cancel}
         </button>
         <button onClick={handleSend} className="btn-primary" disabled={loading}>
-          {loading ? 'Sending...' : 'Send Transaction'}
+          {loading ? strings.transaction.sending : strings.transaction.sendTransaction}
         </button>
       </div>
     </Modal>

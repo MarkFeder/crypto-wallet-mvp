@@ -8,6 +8,7 @@ import Portfolio from './Portfolio';
 import WalletDetail from './WalletDetail';
 import CreateWallet from './CreateWallet';
 import { Skeleton, Spinner } from './ui';
+import { strings } from '../locales';
 
 const STALE_THRESHOLD = 60000; // 1 minute
 
@@ -42,11 +43,11 @@ const Dashboard: React.FC = () => {
     <div className="dashboard">
       <header className="dashboard-header">
         <div className="header-content">
-          <h1>🔐 CryptoVault</h1>
+          <h1>🔐 {strings.app.name}</h1>
           <div className="header-actions">
-            <span className="user-info">Welcome, {user?.username}!</span>
+            <span className="user-info">{strings.auth.welcomeUser(user?.username || '')}</span>
             <button onClick={handleLogout} className="btn-secondary">
-              Logout
+              {strings.common.logout}
             </button>
           </div>
         </div>
@@ -56,11 +57,11 @@ const Dashboard: React.FC = () => {
         <aside className="sidebar">
           <div className="sidebar-section">
             <div className="sidebar-header">
-              <h3>My Wallets</h3>
+              <h3>{strings.wallet.myWallets}</h3>
               <button
                 onClick={() => setShowCreateWallet(true)}
                 className="btn-icon"
-                title="Create Wallet"
+                title={strings.wallet.createWallet}
               >
                 +
               </button>
@@ -72,7 +73,7 @@ const Dashboard: React.FC = () => {
                   <Skeleton height={60} count={3} className="wallet-skeleton" />
                 </div>
               ) : wallets.length === 0 ? (
-                <p className="empty-state">No wallets yet. Create one!</p>
+                <p className="empty-state">{strings.wallet.noWalletsYet}</p>
               ) : (
                 wallets.map((wallet) => (
                   <div
@@ -84,7 +85,7 @@ const Dashboard: React.FC = () => {
                   >
                     <div className="wallet-name">{wallet.name}</div>
                     <div className="wallet-assets">
-                      {wallet.addresses.length} assets
+                      {wallet.addresses.length} {strings.common.assets}
                     </div>
                   </div>
                 ))
@@ -97,7 +98,7 @@ const Dashboard: React.FC = () => {
           {loading && wallets.length === 0 ? (
             <div className="main-loading">
               <Spinner size="large" />
-              <p>Loading your portfolio...</p>
+              <p>{strings.portfolio.loadingPortfolio}</p>
             </div>
           ) : selectedWallet ? (
             <WalletDetail wallet={selectedWallet} />
