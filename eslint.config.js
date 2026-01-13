@@ -75,9 +75,9 @@ module.exports = tseslint.config(
     },
   },
 
-  // Backend and scripts JavaScript files
+  // Backend, common, and scripts JavaScript files
   {
-    files: ['src/server/**/*.js', 'src/constants/**/*.js', 'scripts/**/*.js', 'migrations/**/*.js'],
+    files: ['src/server/**/*.js', 'src/common/**/*.js', 'scripts/**/*.js', 'migrations/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.node,
