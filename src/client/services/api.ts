@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { API_BASE_URL } from '../constants/config';
+import { API_BASE_URL } from '../../common/constants/config';
 import { storageService } from './storageService';
 
 class ApiService {

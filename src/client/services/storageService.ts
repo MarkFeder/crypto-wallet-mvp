@@ -1,5 +1,5 @@
-import { STORAGE_KEYS } from '../constants/config';
-import { User } from '../types';
+import { STORAGE_KEYS } from '../../common/constants/config';
+import { User } from '../../common/types';
 
 /**
  * Centralized storage service for managing localStorage operations

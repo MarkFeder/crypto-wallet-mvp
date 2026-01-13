@@ -4,7 +4,7 @@ const db = require('../config/db');
 const { JWT_SECRET, COOKIE_OPTIONS } = require('../middleware/auth');
 const queries = require('../queries');
 const { sendSuccess, badRequest, unauthorized, serverError } = require('../utils/apiResponse');
-const { HTTP_STATUS } = require('../../constants/serverConfig');
+const { HTTP_STATUS } = require('../../common/constants');
 const { strings } = require('../locales/strings');
 
 const register = async (req, res) => {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Wallet, Price } from '../types';
+import { Wallet, Price } from '../../common/types';
 
 export const usePortfolioValue = (wallets: Wallet[], prices: Record<string, Price>): number => {
   return useMemo(() => {

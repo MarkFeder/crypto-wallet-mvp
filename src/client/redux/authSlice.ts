@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiService } from '../services/api';
 import { storageService } from '../services/storageService';
-import { AuthState, AuthResponse } from '../types';
-import { API_ENDPOINTS } from '../constants/config';
+import { AuthState, AuthResponse } from '../../common/types';
+import { API_ENDPOINTS } from '../../common/constants/config';
 import { strings } from '../locales';
 
 const initialState: AuthState = {

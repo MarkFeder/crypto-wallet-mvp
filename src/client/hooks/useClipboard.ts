@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { APP_CONFIG } from '../constants/config';
+import { APP_CONFIG } from '../../common/constants/config';
 
 interface UseClipboardReturn {
   copied: boolean;

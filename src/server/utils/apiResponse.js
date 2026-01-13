@@ -1,4 +1,4 @@
-const { HTTP_STATUS } = require('../../constants/serverConfig');
+const { HTTP_STATUS } = require('../../common/constants');
 
 /**
  * Send a success response

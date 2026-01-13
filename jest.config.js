@@ -9,7 +9,7 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.{js,ts}',
     '!src/**/*.d.ts',
-    '!src/index.tsx',
+    '!src/client/index.tsx',
     '!src/server/index.js',
   ],
   coverageDirectory: 'coverage',

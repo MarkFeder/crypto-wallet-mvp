@@ -155,61 +155,43 @@ Open http://localhost:3000 and login with:
 ```
 crypto-wallet-mvp/
 ├── src/
-│   ├── components/          # React components
-│   │   ├── ui/             # Reusable UI (Button, Card, Modal, Toast, Skeleton, Spinner)
-│   │   ├── ErrorBoundary.tsx
-│   │   ├── ErrorFallback.tsx
-│   │   ├── Portfolio.tsx
-│   │   ├── WalletDetail.tsx
-│   │   └── ...
-│   ├── context/            # React context providers
-│   │   └── ToastContext.tsx
-│   ├── redux/              # Redux store & slices
-│   ├── services/           # API services
-│   │   ├── api.ts
-│   │   └── storageService.ts
-│   ├── utils/              # Utility functions
-│   │   ├── calculations.ts
-│   │   ├── format.ts
-│   │   └── validation.ts
-│   ├── constants/          # Configuration
-│   │   ├── config.ts
-│   │   └── serverConfig.js
-│   ├── hooks/              # Custom React hooks
-│   │   ├── useToast.ts
-│   │   ├── useFormValidation.ts
-│   │   ├── usePricePolling.ts
-│   │   └── usePortfolioValue.ts
-│   ├── locales/            # Localization strings
-│   │   └── strings.ts
-│   ├── types/              # TypeScript types
-│   ├── server/             # Backend
-│   │   ├── controllers/    # Route handlers
-│   │   ├── middleware/     # Auth, validation, rate limiting
-│   │   ├── schemas/        # Joi validation schemas
-│   │   ├── services/       # Business logic
-│   │   ├── utils/          # Server utilities
-│   │   ├── queries/        # SQL queries
-│   │   ├── locales/        # Server-side strings
-│   │   └── config/         # Server config
-│   └── index.tsx           # App entry point
-├── tests/                  # Test suite
-│   ├── api/               # API integration tests
-│   │   ├── wallet.test.js
-│   │   └── transaction.test.js
-│   ├── unit/              # Unit tests
-│   │   ├── calculations.test.js
-│   │   └── crypto-utils.test.js
-│   ├── mocks/             # Test mocks
-│   │   └── db.js
-│   ├── setup.js           # Test configuration
-│   └── helpers.js         # Test utilities
-├── migrations/            # Database migrations
-├── scripts/               # Database scripts
-│   ├── setupDatabase.js   # Complete setup
-│   ├── seedTestUser.js    # Test data
-│   └── testConnection.js  # Connection test
-└── public/                # Static assets
+│   ├── client/              # Frontend React application
+│   │   ├── components/      # React components
+│   │   │   ├── ui/         # Reusable UI (Button, Card, Modal, Toast, etc.)
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   └── ...
+│   │   ├── context/        # React context providers
+│   │   ├── redux/          # Redux store & slices
+│   │   ├── hooks/          # Custom React hooks
+│   │   ├── services/       # API services
+│   │   ├── utils/          # Client utilities
+│   │   ├── locales/        # Localization strings
+│   │   └── index.tsx       # App entry point
+│   │
+│   ├── common/              # Shared code
+│   │   ├── types/          # TypeScript interfaces
+│   │   └── constants/      # Shared constants
+│   │
+│   └── server/              # Backend Express API
+│       ├── controllers/    # Route handlers
+│       ├── middleware/     # Auth, validation, rate limiting
+│       ├── schemas/        # Joi validation schemas
+│       ├── services/       # Business logic
+│       ├── utils/          # Server utilities
+│       ├── queries/        # SQL queries
+│       ├── locales/        # Server-side strings
+│       ├── config/         # Server config
+│       └── index.js        # Server entry point
+│
+├── tests/                   # Test suite
+│   ├── api/                # API integration tests
+│   ├── unit/               # Unit tests
+│   ├── mocks/              # Test mocks
+│   ├── setup.js            # Test configuration
+│   └── helpers.js          # Test utilities
+├── migrations/              # Database migrations
+├── scripts/                 # Database scripts
+└── public/                  # Static assets
 ```
 
 ## 🗄️ Database Schema

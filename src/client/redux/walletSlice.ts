@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { apiService } from '../services/api';
-import { Wallet, Transaction, WalletState, CreateWalletResponse } from '../types';
-import { API_ENDPOINTS } from '../constants/config';
+import { Wallet, Transaction, WalletState, CreateWalletResponse } from '../../common/types';
+import { API_ENDPOINTS } from '../../common/constants/config';
 import { strings } from '../locales';
 
 interface ExtendedWalletState extends WalletState {

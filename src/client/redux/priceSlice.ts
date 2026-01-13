@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiService } from '../services/api';
-import { Price } from '../types';
-import { API_ENDPOINTS } from '../constants/config';
+import { Price } from '../../common/types';
+import { API_ENDPOINTS } from '../../common/constants/config';
 
 interface PriceState {
   prices: Record<string, Price>;

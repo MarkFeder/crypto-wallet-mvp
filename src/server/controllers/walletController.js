@@ -2,7 +2,7 @@ const db = require('../config/db');
 const cryptoUtils = require('../utils/crypto-utils');
 const queries = require('../queries');
 const { sendSuccess, notFound, serverError } = require('../utils/apiResponse');
-const { HTTP_STATUS } = require('../../constants/serverConfig');
+const { HTTP_STATUS } = require('../../common/constants');
 const { strings } = require('../locales/strings');
 
 const createWallet = async (req, res) => {

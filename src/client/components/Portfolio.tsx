@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { Wallet, Price } from '../types';
+import { Wallet, Price } from '../../common/types';
 import { formatCurrency, formatCrypto, formatPercentage } from '../utils/format';
 import { usePortfolioValue } from '../hooks';
 import {

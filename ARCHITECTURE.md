@@ -56,10 +56,19 @@ The Crypto Wallet MVP is a full-stack application that simulates cryptocurrency 
 
 ## Architecture Layers
 
-### Frontend Layer
+The codebase is organized into three main directories:
 
 ```
 src/
+├── client/              # Frontend React application
+├── common/              # Shared code (types, constants)
+└── server/              # Backend Express API
+```
+
+### Frontend Layer (`src/client/`)
+
+```
+src/client/
 ├── components/           # React UI components
 │   ├── ui/              # Reusable primitives (Button, Card, Modal, etc.)
 │   ├── ErrorBoundary    # Global error catching
@@ -78,10 +87,23 @@ src/
 ├── services/            # External communication
 │   ├── api.ts           # Axios instance with interceptors
 │   └── storageService.ts # localStorage abstraction
-└── locales/             # Internationalization strings
+├── locales/             # Internationalization strings
+├── utils/               # Client-side utilities
+└── index.tsx            # Application entry point
 ```
 
-### Backend Layer
+### Shared Layer (`src/common/`)
+
+```
+src/common/
+├── types/               # TypeScript interfaces shared between client/server
+│   └── index.ts         # User, Wallet, Transaction, Price types
+└── constants/           # Shared configuration
+    ├── config.ts        # TypeScript constants (client)
+    └── index.js         # JavaScript constants (server)
+```
+
+### Backend Layer (`src/server/`)
 
 ```
 src/server/

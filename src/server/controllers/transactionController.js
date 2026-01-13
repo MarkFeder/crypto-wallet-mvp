@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { ethers } = require('ethers');
 const db = require('../config/db');
 const queries = require('../queries');
-const { TRANSACTION_CONFIG, PAGINATION } = require('../../constants/serverConfig');
+const { TRANSACTION_CONFIG, PAGINATION } = require('../../common/constants');
 const { sendSuccess, badRequest, notFound, serverError } = require('../utils/apiResponse');
 const {
   safeParseFloat,

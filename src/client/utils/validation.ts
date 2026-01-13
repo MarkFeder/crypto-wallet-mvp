@@ -1,4 +1,4 @@
-import { VALIDATION } from '../constants/config';
+import { VALIDATION } from '../../common/constants/config';
 
 export const isValidEmail = (email: string): boolean => {
   return VALIDATION.EMAIL_REGEX.test(email);
