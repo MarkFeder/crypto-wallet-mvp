@@ -1,0 +1,44 @@
+/**
+ * Example migration: Add user preferences
+ *
+ * This is an example migration showing the expand-contract pattern.
+ * Rename this file (remove .example) to activate it.
+ *
+ * Usage:
+ *   npm run migrate:create add-feature-name
+ */
+
+exports.up = (pgm) => {
+  // Step 1: Add new nullable column (non-blocking)
+  pgm.addColumn('users', {
+    preferences: {
+      type: 'jsonb',
+      default: pgm.func("'{}'::jsonb"),
+    },
+  });
+
+  // Step 2: Add index if needed for queries
+  pgm.createIndex('users', 'preferences', {
+    name: 'idx_users_preferences',
+    method: 'gin', // GIN index for JSONB
+  });
+};
+
+exports.down = (pgm) => {
+  pgm.dropIndex('users', 'preferences', { name: 'idx_users_preferences' });
+  pgm.dropColumn('users', 'preferences');
+};
+
+/**
+ * For large tables, use batched updates instead of DEFAULT:
+ *
+ * exports.up = async (pgm) => {
+ *   // Add nullable column first (instant)
+ *   pgm.addColumn('users', {
+ *     preferences: { type: 'jsonb' }
+ *   });
+ *
+ *   // Then backfill in batches (separate script or subsequent migration)
+ *   // See scripts/backfill-preferences.js for example
+ * };
+ */
