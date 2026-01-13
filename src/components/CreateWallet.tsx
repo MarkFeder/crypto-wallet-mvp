@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { Button, Input, Modal } from './ui';
-import { useClipboard } from '../hooks';
+import { Modal } from './ui';
 import { strings } from '../locales';
 
 interface CreateWalletProps {

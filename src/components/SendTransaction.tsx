@@ -38,7 +38,7 @@ const SendTransaction: React.FC<SendTransactionProps> = ({ walletId, currency, o
       );
       toast.success(strings.toast.transactionSuccess);
       onClose();
-    } catch (error) {
+    } catch (_error) {
       toast.error(strings.toast.transactionFailed);
     } finally {
       setLoading(false);
