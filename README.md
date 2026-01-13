@@ -19,14 +19,18 @@ A full-stack cryptocurrency wallet application featuring multi-currency support,
 ### User Experience
 - 💱 **Live Price Data**: Real-time cryptocurrency prices with 24h changes
 - 🎨 **Modern UI**: Clean, responsive interface with reusable components
-- 🔒 **Secure Authentication**: JWT-based auth with bcrypt password hashing
+- 🔒 **Secure Authentication**: JWT-based auth with HttpOnly cookies
 - 📱 **Mobile-Friendly**: Responsive design for all screen sizes
+- 🔔 **Toast Notifications**: User-friendly feedback for all actions
+- ⚡ **Loading States**: Skeleton loaders and spinners for better UX
+- 🛡️ **Error Boundaries**: Graceful error handling with recovery options
+- 🌐 **Localization Ready**: Centralized string management for i18n support
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Node.js** (v16+)
+- **Node.js** (v18+)
 - **PostgreSQL** (v12+)
 - **npm** or **yarn**
 
@@ -129,8 +133,16 @@ Open http://localhost:3000 and login with:
 - **Node.js** - Runtime
 - **Express 5** - Web framework
 - **PostgreSQL** - Database
-- **JWT** - Authentication
+- **JWT** - Authentication (HttpOnly cookies)
 - **bcryptjs** - Password hashing
+- **Joi** - Schema validation
+- **express-rate-limit** - API rate limiting
+- **morgan** - HTTP request logging
+
+### Testing
+- **Jest** - Test framework
+- **Supertest** - HTTP assertions
+- **ts-jest** - TypeScript support
 
 ### Crypto Libraries
 - **ethers.js** - Ethereum wallet operations
@@ -144,10 +156,14 @@ Open http://localhost:3000 and login with:
 crypto-wallet-mvp/
 ├── src/
 │   ├── components/          # React components
-│   │   ├── ui/             # Reusable UI components
+│   │   ├── ui/             # Reusable UI (Button, Card, Modal, Toast, Skeleton, Spinner)
+│   │   ├── ErrorBoundary.tsx
+│   │   ├── ErrorFallback.tsx
 │   │   ├── Portfolio.tsx
 │   │   ├── WalletDetail.tsx
 │   │   └── ...
+│   ├── context/            # React context providers
+│   │   └── ToastContext.tsx
 │   ├── redux/              # Redux store & slices
 │   ├── services/           # API services
 │   │   ├── api.ts
@@ -160,19 +176,40 @@ crypto-wallet-mvp/
 │   │   ├── config.ts
 │   │   └── serverConfig.js
 │   ├── hooks/              # Custom React hooks
+│   │   ├── useToast.ts
+│   │   ├── useFormValidation.ts
+│   │   ├── usePricePolling.ts
+│   │   └── usePortfolioValue.ts
+│   ├── locales/            # Localization strings
+│   │   └── strings.ts
 │   ├── types/              # TypeScript types
 │   ├── server/             # Backend
 │   │   ├── controllers/    # Route handlers
+│   │   ├── middleware/     # Auth, validation, rate limiting
+│   │   ├── schemas/        # Joi validation schemas
 │   │   ├── services/       # Business logic
 │   │   ├── utils/          # Server utilities
 │   │   ├── queries/        # SQL queries
+│   │   ├── locales/        # Server-side strings
 │   │   └── config/         # Server config
 │   └── index.tsx           # App entry point
-├── scripts/                # Database scripts
-│   ├── setupDatabase.js    # Complete setup
-│   ├── seedTestUser.js     # Test data
-│   └── testConnection.js   # Connection test
-└── public/                 # Static assets
+├── tests/                  # Test suite
+│   ├── api/               # API integration tests
+│   │   ├── wallet.test.js
+│   │   └── transaction.test.js
+│   ├── unit/              # Unit tests
+│   │   ├── calculations.test.js
+│   │   └── crypto-utils.test.js
+│   ├── mocks/             # Test mocks
+│   │   └── db.js
+│   ├── setup.js           # Test configuration
+│   └── helpers.js         # Test utilities
+├── migrations/            # Database migrations
+├── scripts/               # Database scripts
+│   ├── setupDatabase.js   # Complete setup
+│   ├── seedTestUser.js    # Test data
+│   └── testConnection.js  # Connection test
+└── public/                # Static assets
 ```
 
 ## 🗄️ Database Schema
@@ -187,24 +224,38 @@ crypto-wallet-mvp/
 ## 🔐 Security Features
 
 - ✅ **Password Hashing**: bcrypt with salt rounds
-- ✅ **JWT Authentication**: Secure token-based auth
-- ✅ **Input Validation**: Server & client-side validation
-- ✅ **SQL Injection Prevention**: Parameterized queries
-- ✅ **Environment Variables**: Sensitive data in .env
-- ✅ **Error Handling**: Consistent error responses
+- ✅ **HttpOnly Cookies**: JWT stored in secure HttpOnly cookies (not localStorage)
+- ✅ **Rate Limiting**: Protection against brute force attacks (login, registration, API)
+- ✅ **Input Validation**: Joi schemas for all API endpoints + client-side validation
+- ✅ **SQL Injection Prevention**: Parameterized queries throughout
+- ✅ **Environment Variables**: Sensitive data in .env (JWT_SECRET required)
+- ✅ **Error Boundaries**: Graceful error handling without exposing internals
+- ✅ **CORS Configuration**: Proper cross-origin resource sharing setup
 
-⚠️ **Note**: This is an MVP for demonstration. For production:
-- Add rate limiting
-- Implement HTTPS
+⚠️ **Note**: This is an MVP for demonstration. For production, additionally consider:
+- Implement HTTPS/TLS
 - Add 2FA authentication
 - Use hardware security modules for key storage
 - Implement proper key encryption at rest
+- Add request logging and monitoring
 
-## 🎯 Code Quality Improvements
+## 🎯 Code Quality & Architecture
 
-Recent refactoring focused on maintainability:
+### Testing
+- ✅ **78 Tests**: Comprehensive test suite covering unit and API tests
+- ✅ **API Tests**: Wallet creation, transactions, authentication
+- ✅ **Unit Tests**: Calculations, crypto utilities, validation
+- ✅ **Mock Database**: Isolated testing without PostgreSQL dependency
 
-### Extracted Concerns
+### Architecture Improvements
+- ✅ **Barrel Exports**: Clean imports via index files
+- ✅ **Localization**: Centralized strings for easy i18n
+- ✅ **Error Boundaries**: React error handling with recovery
+- ✅ **Toast System**: Context-based notification system
+- ✅ **Form Validation**: Reusable validation hook
+- ✅ **Database Migrations**: Version-controlled schema changes
+
+### Code Organization
 - ✅ **Configuration**: Centralized constants and config
 - ✅ **API Responses**: Reusable error/success handlers
 - ✅ **Storage Service**: Centralized localStorage operations
@@ -212,11 +263,31 @@ Recent refactoring focused on maintainability:
 - ✅ **Business Logic**: Extracted swap service from controllers
 
 ### Benefits
-- 🔄 Reduced code duplication (100+ lines)
+- 🔄 Reduced code duplication
 - 📦 Better separation of concerns
-- 🧪 More testable code
+- 🧪 Fully testable codebase
 - 🛡️ Safer number handling (prevents NaN errors)
 - 📖 Consistent patterns across codebase
+- 🌐 Ready for internationalization
+
+## 🧪 Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run with coverage report
+npm run test:coverage
+
+# Run only unit tests
+npm run test:unit
+
+# Run only API tests
+npm run test:api
+```
 
 ## 🤝 Contributing
 
@@ -224,9 +295,10 @@ Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Run tests to ensure everything works (`npm test`)
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ## 📝 Test Credentials
 
