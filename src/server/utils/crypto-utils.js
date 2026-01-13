@@ -35,12 +35,12 @@ function deriveBitcoinAddress(mnemonic, index = 0) {
 // Derive Ethereum address from mnemonic
 function deriveEthereumAddress(mnemonic, index = 0) {
   const seed = bip39.mnemonicToSeedSync(mnemonic);
-  
+
   // BIP44 path for Ethereum: m/44'/60'/0'/0/index
   const hdNode = ethers.HDNodeWallet.fromSeed(seed);
   const path = `m/44'/60'/0'/0/${index}`;
   const wallet = hdNode.derivePath(path);
-  
+
   return {
     address: wallet.address,
     privateKey: wallet.privateKey,

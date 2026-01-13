@@ -34,11 +34,9 @@ const errorResponses = {
   unauthorized: (res, message = 'Unauthorized') =>
     sendError(res, message, HTTP_STATUS.UNAUTHORIZED),
 
-  forbidden: (res, message = 'Forbidden') =>
-    sendError(res, message, HTTP_STATUS.FORBIDDEN),
+  forbidden: (res, message = 'Forbidden') => sendError(res, message, HTTP_STATUS.FORBIDDEN),
 
-  notFound: (res, message = 'Resource not found') =>
-    sendError(res, message, HTTP_STATUS.NOT_FOUND),
+  notFound: (res, message = 'Resource not found') => sendError(res, message, HTTP_STATUS.NOT_FOUND),
 
   serverError: (res, message = 'Internal server error', error = null) =>
     sendError(res, message, HTTP_STATUS.INTERNAL_SERVER_ERROR, error),
@@ -48,9 +46,9 @@ const errorResponses = {
  * Async error handler wrapper
  * Wraps async route handlers to catch errors and pass them to error handler
  */
-const asyncHandler = (fn) => {
+const asyncHandler = fn => {
   return (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch((error) => {
+    Promise.resolve(fn(req, res, next)).catch(error => {
       console.error('Async handler error:', error);
       sendError(res, 'An unexpected error occurred', HTTP_STATUS.INTERNAL_SERVER_ERROR, error);
     });

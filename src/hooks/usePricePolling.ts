@@ -13,7 +13,7 @@ export const usePricePolling = (interval: number = 60000, enabled: boolean = tru
 
     // Only fetch if no prices or data is stale (older than interval)
     const now = Date.now();
-    const isStale = Object.keys(prices).length === 0 || (now - lastFetchRef.current > interval);
+    const isStale = Object.keys(prices).length === 0 || now - lastFetchRef.current > interval;
 
     if (isStale) {
       dispatch(fetchPrices());

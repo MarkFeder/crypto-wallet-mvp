@@ -5,11 +5,11 @@ const { badRequest } = require('../utils/apiResponse');
  * @param {Object} schema - Joi validation schema
  * @returns {Function} Express middleware function
  */
-const validate = (schema) => {
+const validate = schema => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true
+      stripUnknown: true,
     });
 
     if (error) {
@@ -27,10 +27,10 @@ const validate = (schema) => {
  * @param {Object} schema - Joi validation schema
  * @returns {Function} Express middleware function
  */
-const validateParams = (schema) => {
+const validateParams = schema => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.params, {
-      abortEarly: false
+      abortEarly: false,
     });
 
     if (error) {
@@ -48,10 +48,10 @@ const validateParams = (schema) => {
  * @param {Object} schema - Joi validation schema
  * @returns {Function} Express middleware function
  */
-const validateQuery = (schema) => {
+const validateQuery = schema => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.query, {
-      abortEarly: false
+      abortEarly: false,
     });
 
     if (error) {

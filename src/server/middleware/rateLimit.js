@@ -7,7 +7,7 @@ const authLimiter = rateLimit({
   max: 5, // 5 attempts per window
   message: {
     success: false,
-    error: strings.rateLimit.tooManyLoginAttempts
+    error: strings.rateLimit.tooManyLoginAttempts,
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -19,7 +19,7 @@ const apiLimiter = rateLimit({
   max: 100, // 100 requests per minute
   message: {
     success: false,
-    error: strings.rateLimit.tooManyRequests
+    error: strings.rateLimit.tooManyRequests,
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -31,7 +31,7 @@ const transactionLimiter = rateLimit({
   max: 10, // 10 transactions per minute
   message: {
     success: false,
-    error: strings.rateLimit.tooManyTransactionRequests
+    error: strings.rateLimit.tooManyTransactionRequests,
   },
   standardHeaders: true,
   legacyHeaders: false,

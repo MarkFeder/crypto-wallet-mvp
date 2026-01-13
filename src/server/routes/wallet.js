@@ -7,6 +7,11 @@ const { createWalletSchema, walletIdParamSchema } = require('../schemas/walletSc
 
 router.post('/', authenticateToken, validate(createWalletSchema), walletController.createWallet);
 router.get('/', authenticateToken, walletController.getWallets);
-router.get('/:id', authenticateToken, validateParams(walletIdParamSchema), walletController.getWalletById);
+router.get(
+  '/:id',
+  authenticateToken,
+  validateParams(walletIdParamSchema),
+  walletController.getWalletById
+);
 
 module.exports = router;

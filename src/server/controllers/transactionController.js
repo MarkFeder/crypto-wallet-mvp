@@ -4,7 +4,12 @@ const db = require('../config/db');
 const queries = require('../queries');
 const { TRANSACTION_CONFIG, PAGINATION } = require('../../constants/serverConfig');
 const { sendSuccess, badRequest, notFound, serverError } = require('../utils/apiResponse');
-const { safeParseFloat, calculateSwapWithFee, hasSufficientBalance, toFixedSafe } = require('../utils/calculations');
+const {
+  safeParseFloat,
+  calculateSwapWithFee,
+  hasSufficientBalance,
+  toFixedSafe,
+} = require('../utils/calculations');
 const swapService = require('../services/swapService');
 const { strings } = require('../locales/strings');
 
@@ -12,7 +17,7 @@ const { strings } = require('../locales/strings');
 exports.sendTransaction = async (req, res) => {
   try {
     const { fromAddress, toAddress, amount, tokenSymbol } = req.body;
-    
+
     // Validate inputs
     if (!ethers.isAddress(fromAddress) || !ethers.isAddress(toAddress)) {
       return badRequest(res, strings.transaction.invalidAddressFormat);
@@ -23,7 +28,10 @@ exports.sendTransaction = async (req, res) => {
     }
 
     // Check if wallet exists and has sufficient balance
-    const assetResult = await db.query(queries.transaction.findAssetBalance, [fromAddress, tokenSymbol]);
+    const assetResult = await db.query(queries.transaction.findAssetBalance, [
+      fromAddress,
+      tokenSymbol,
+    ]);
 
     if (assetResult.rows.length === 0) {
       return notFound(res, strings.transaction.assetNotFound);
@@ -56,7 +64,7 @@ exports.sendTransaction = async (req, res) => {
     setTimeout(async () => {
       await db.query(queries.transaction.updateTransactionStatus, ['confirmed', txHash]);
     }, TRANSACTION_CONFIG.CONFIRMATION_DELAY);
-    
+
     return sendSuccess(res, {
       transaction: {
         txHash,
@@ -64,8 +72,8 @@ exports.sendTransaction = async (req, res) => {
         to: toAddress,
         amount,
         tokenSymbol,
-        status: TRANSACTION_CONFIG.DEFAULT_STATUS
-      }
+        status: TRANSACTION_CONFIG.DEFAULT_STATUS,
+      },
     });
   } catch (error) {
     return serverError(res, strings.transaction.failedToSend, error);
@@ -79,11 +87,15 @@ exports.getTransactionHistory = async (req, res) => {
     const limit = parseInt(req.query.limit) || PAGINATION.DEFAULT_LIMIT;
     const offset = parseInt(req.query.offset) || PAGINATION.DEFAULT_OFFSET;
 
-    const result = await db.query(queries.transaction.findTransactionsByAddress, [address, limit, offset]);
+    const result = await db.query(queries.transaction.findTransactionsByAddress, [
+      address,
+      limit,
+      offset,
+    ]);
 
     return sendSuccess(res, {
       transactions: result.rows,
-      count: result.rows.length
+      count: result.rows.length,
     });
   } catch (error) {
     return serverError(res, strings.transaction.failedToGetHistory, error);
@@ -102,7 +114,7 @@ exports.getTransactionDetails = async (req, res) => {
     }
 
     return sendSuccess(res, {
-      transaction: result.rows[0]
+      transaction: result.rows[0],
     });
   } catch (error) {
     return serverError(res, strings.transaction.failedToGetDetails, error);
@@ -113,14 +125,17 @@ exports.getTransactionDetails = async (req, res) => {
 exports.swapTokens = async (req, res) => {
   try {
     const { walletAddress, fromToken, toToken, fromAmount } = req.body;
-    
+
     // Validate inputs
     if (!walletAddress || !fromToken || !toToken || !fromAmount) {
       return badRequest(res, strings.transaction.missingRequiredFields);
     }
 
     // Check balance of fromToken
-    const fromAsset = await db.query(queries.transaction.findAssetBalance, [walletAddress, fromToken]);
+    const fromAsset = await db.query(queries.transaction.findAssetBalance, [
+      walletAddress,
+      fromToken,
+    ]);
 
     if (fromAsset.rows.length === 0) {
       return badRequest(res, strings.transaction.assetNotFound);
@@ -129,7 +144,7 @@ exports.swapTokens = async (req, res) => {
     if (!hasSufficientBalance(fromAsset.rows[0].balance, fromAmount)) {
       return badRequest(res, strings.transaction.insufficientBalanceForSwap);
     }
-    
+
     // Get token prices
     const priceMap = await swapService.fetchTokenPrices(fromToken, toToken);
 
@@ -156,14 +171,14 @@ exports.swapTokens = async (req, res) => {
     // Create transaction record
     const txHash = '0x' + crypto.randomBytes(32).toString('hex');
     await swapService.createSwapTransaction(walletAddress, fromToken, toToken, fromAmount, txHash);
-    
+
     return sendSuccess(res, {
       swap: {
         from: { token: fromToken, amount: fromAmount },
         to: { token: toToken, amount: toAmountFormatted },
         fee: toFixedSafe(feeUSD, 2),
-        txHash
-      }
+        txHash,
+      },
     });
   } catch (error) {
     return serverError(res, strings.transaction.failedToSwap, error);

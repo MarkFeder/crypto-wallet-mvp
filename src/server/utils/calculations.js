@@ -49,7 +49,7 @@ const hasSufficientBalance = (balance, amount, fee = 0) => {
   const amountNum = safeParseFloat(amount);
   const feeNum = safeParseFloat(fee);
 
-  return balanceNum >= (amountNum + feeNum);
+  return balanceNum >= amountNum + feeNum;
 };
 
 /**

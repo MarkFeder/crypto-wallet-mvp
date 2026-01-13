@@ -24,7 +24,18 @@ export const API_ENDPOINTS = {
   },
 };
 
-export const SUPPORTED_CURRENCIES = ['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT'];
+export const SUPPORTED_CURRENCIES = [
+  'BTC',
+  'ETH',
+  'USDT',
+  'USDC',
+  'BNB',
+  'SOL',
+  'XRP',
+  'ADA',
+  'DOGE',
+  'DOT',
+];
 
 export const STORAGE_KEYS = {
   USER: 'crypto_wallet_user',

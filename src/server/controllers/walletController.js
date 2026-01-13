@@ -21,14 +21,18 @@ const createWallet = async (req, res) => {
     await db.query(queries.wallet.insertWalletAddress, [wallet.id, 'BTC', btcAddress.address]);
     await db.query(queries.wallet.insertWalletAddress, [wallet.id, 'ETH', ethAddress.address]);
 
-    return sendSuccess(res, {
-      wallet,
-      mnemonic,
-      addresses: {
-        BTC: btcAddress.address,
-        ETH: ethAddress.address,
+    return sendSuccess(
+      res,
+      {
+        wallet,
+        mnemonic,
+        addresses: {
+          BTC: btcAddress.address,
+          ETH: ethAddress.address,
+        },
       },
-    }, HTTP_STATUS.CREATED);
+      HTTP_STATUS.CREATED
+    );
   } catch (error) {
     return serverError(res, strings.wallet.failedToCreate, error);
   }
@@ -41,7 +45,7 @@ const getWallets = async (req, res) => {
     const walletsResult = await db.query(queries.wallet.findWalletsByUserId, [userId]);
 
     const wallets = await Promise.all(
-      walletsResult.rows.map(async (wallet) => {
+      walletsResult.rows.map(async wallet => {
         const addressesResult = await db.query(queries.wallet.findAddressesByWalletId, [wallet.id]);
 
         return {

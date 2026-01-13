@@ -2,24 +2,16 @@ const Joi = require('joi');
 const { strings } = require('../locales/strings');
 
 const registerSchema = Joi.object({
-  username: Joi.string()
-    .alphanum()
-    .min(3)
-    .max(30)
-    .required()
-    .messages({
-      'string.min': strings.validation.auth.usernameMinLength,
-      'string.max': strings.validation.auth.usernameMaxLength,
-      'string.alphanum': strings.validation.auth.usernameAlphanumeric,
-      'any.required': strings.validation.auth.usernameRequired
-    }),
-  email: Joi.string()
-    .email()
-    .required()
-    .messages({
-      'string.email': strings.validation.auth.emailInvalid,
-      'any.required': strings.validation.auth.emailRequired
-    }),
+  username: Joi.string().alphanum().min(3).max(30).required().messages({
+    'string.min': strings.validation.auth.usernameMinLength,
+    'string.max': strings.validation.auth.usernameMaxLength,
+    'string.alphanum': strings.validation.auth.usernameAlphanumeric,
+    'any.required': strings.validation.auth.usernameRequired,
+  }),
+  email: Joi.string().email().required().messages({
+    'string.email': strings.validation.auth.emailInvalid,
+    'any.required': strings.validation.auth.emailRequired,
+  }),
   password: Joi.string()
     .min(8)
     .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
@@ -27,23 +19,18 @@ const registerSchema = Joi.object({
     .messages({
       'string.min': strings.validation.auth.passwordMinLength,
       'string.pattern.base': strings.validation.auth.passwordRequirements,
-      'any.required': strings.validation.auth.passwordRequired
-    })
+      'any.required': strings.validation.auth.passwordRequired,
+    }),
 });
 
 const loginSchema = Joi.object({
-  email: Joi.string()
-    .email()
-    .required()
-    .messages({
-      'string.email': strings.validation.auth.emailInvalid,
-      'any.required': strings.validation.auth.emailRequired
-    }),
-  password: Joi.string()
-    .required()
-    .messages({
-      'any.required': strings.validation.auth.passwordRequired
-    })
+  email: Joi.string().email().required().messages({
+    'string.email': strings.validation.auth.emailInvalid,
+    'any.required': strings.validation.auth.emailRequired,
+  }),
+  password: Joi.string().required().messages({
+    'any.required': strings.validation.auth.passwordRequired,
+  }),
 });
 
 module.exports = { registerSchema, loginSchema };

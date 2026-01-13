@@ -13,7 +13,7 @@ const MOCK_PRICES = {
   XRP: { price: '0.58', change24h: 1.8 },
   ADA: { price: '0.52', change24h: -0.5 },
   DOGE: { price: '0.089', change24h: 4.2 },
-  DOT: { price: '7.35', change24h: -2.1 }
+  DOT: { price: '7.35', change24h: -2.1 },
 };
 
 // Update price cache (should be called periodically)
@@ -49,18 +49,18 @@ exports.getPrices = async (req, res) => {
       symbol: row.token_symbol,
       price: row.price_usd,
       change24h: MOCK_PRICES[row.token_symbol]?.change24h || 0,
-      lastUpdated: row.last_updated
+      lastUpdated: row.last_updated,
     }));
 
     res.json({
       success: true,
-      prices: pricesWithChange
+      prices: pricesWithChange,
     });
   } catch (error) {
     console.error('Error getting prices:', error);
     res.status(500).json({
       success: false,
-      error: strings.price.failedToGetPrices
+      error: strings.price.failedToGetPrices,
     });
   }
 };
@@ -75,7 +75,7 @@ exports.getTokenPrice = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: strings.price.notFoundForToken
+        error: strings.price.notFoundForToken,
       });
     }
 
@@ -85,14 +85,14 @@ exports.getTokenPrice = async (req, res) => {
         symbol: result.rows[0].token_symbol,
         price: result.rows[0].price_usd,
         change24h: MOCK_PRICES[result.rows[0].token_symbol]?.change24h || 0,
-        lastUpdated: result.rows[0].last_updated
-      }
+        lastUpdated: result.rows[0].last_updated,
+      },
     });
   } catch (error) {
     console.error('Error getting token price:', error);
     res.status(500).json({
       success: false,
-      error: strings.price.failedToGetTokenPrice
+      error: strings.price.failedToGetTokenPrice,
     });
   }
 };
@@ -109,39 +109,39 @@ exports.getPriceHistory = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: strings.price.notFoundForToken
+        error: strings.price.notFoundForToken,
       });
     }
 
     const currentPrice = parseFloat(result.rows[0].price_usd);
-    
+
     // Generate simulated historical data
     const history = [];
     const now = Date.now();
     const dayMs = 24 * 60 * 60 * 1000;
-    
+
     for (let i = days - 1; i >= 0; i--) {
-      const timestamp = new Date(now - (i * dayMs));
+      const timestamp = new Date(now - i * dayMs);
       // Add some random variation (±5%)
       const variation = (Math.random() - 0.5) * 0.1;
       const price = (currentPrice * (1 + variation)).toFixed(2);
-      
+
       history.push({
         timestamp: timestamp.toISOString(),
-        price: price
+        price: price,
       });
     }
-    
+
     res.json({
       success: true,
       symbol: symbol.toUpperCase(),
-      history
+      history,
     });
   } catch (error) {
     console.error('Error getting price history:', error);
     res.status(500).json({
       success: false,
-      error: strings.price.failedToGetHistory
+      error: strings.price.failedToGetHistory,
     });
   }
 };

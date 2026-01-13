@@ -36,16 +36,14 @@ const CreateWallet: React.FC<CreateWalletProps> = ({ onClose, onCreate }) => {
       {step === 'name' ? (
         <>
           <h2>{strings.wallet.createNewWallet}</h2>
-          <p className="modal-description">
-            {strings.wallet.walletNameDescription}
-          </p>
+          <p className="modal-description">{strings.wallet.walletNameDescription}</p>
 
           <div className="form-group">
             <label>{strings.wallet.walletName}</label>
             <input
               type="text"
               value={walletName}
-              onChange={(e) => setWalletName(e.target.value)}
+              onChange={e => setWalletName(e.target.value)}
               placeholder={strings.wallet.walletNamePlaceholder}
               autoFocus
             />
@@ -63,9 +61,7 @@ const CreateWallet: React.FC<CreateWalletProps> = ({ onClose, onCreate }) => {
       ) : (
         <>
           <h2>🔑 {strings.wallet.recoveryPhrase.title}</h2>
-          <div className="warning-box">
-            ⚠️ {strings.wallet.recoveryPhrase.warning}
-          </div>
+          <div className="warning-box">⚠️ {strings.wallet.recoveryPhrase.warning}</div>
 
           <div className="mnemonic-box">
             {mnemonic?.split(' ').map((word, index) => (

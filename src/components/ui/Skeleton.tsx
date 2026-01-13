@@ -40,12 +40,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
     );
   }
 
-  return (
-    <div
-      className={`skeleton ${variantClasses[variant]} ${className}`}
-      style={style}
-    />
-  );
+  return <div className={`skeleton ${variantClasses[variant]} ${className}`} style={style} />;
 };
 
 export default Skeleton;

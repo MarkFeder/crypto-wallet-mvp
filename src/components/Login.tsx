@@ -8,7 +8,7 @@ import { strings } from '../locales';
 const Login: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
-  
+
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
@@ -18,7 +18,7 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (isRegister) {
       await dispatch(register(formData));
     } else {
@@ -74,18 +74,17 @@ const Login: React.FC = () => {
           {error && <div className="error-message">{error}</div>}
 
           <Button type="submit" disabled={loading}>
-            {loading ? strings.auth.processing : isRegister ? strings.auth.signUp : strings.auth.signIn}
+            {loading
+              ? strings.auth.processing
+              : isRegister
+                ? strings.auth.signUp
+                : strings.auth.signIn}
           </Button>
         </form>
 
         <div className="login-footer">
-          <Button
-            variant="link"
-            onClick={() => setIsRegister(!isRegister)}
-          >
-            {isRegister
-              ? strings.auth.alreadyHaveAccount
-              : strings.auth.dontHaveAccount}
+          <Button variant="link" onClick={() => setIsRegister(!isRegister)}>
+            {isRegister ? strings.auth.alreadyHaveAccount : strings.auth.dontHaveAccount}
           </Button>
         </div>
       </div>

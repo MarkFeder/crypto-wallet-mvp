@@ -22,26 +22,22 @@ const initialState: ExtendedWalletState = {
   lastFetched: null,
 };
 
-export const createWallet = createAsyncThunk(
-  'wallet/create',
-  async (name: string) => {
-    const response = await apiService.post<CreateWalletResponse>(API_ENDPOINTS.WALLETS.BASE, { name });
-    return response;
-  }
-);
+export const createWallet = createAsyncThunk('wallet/create', async (name: string) => {
+  const response = await apiService.post<CreateWalletResponse>(API_ENDPOINTS.WALLETS.BASE, {
+    name,
+  });
+  return response;
+});
 
 export const fetchWallets = createAsyncThunk('wallet/fetchAll', async () => {
   const response = await apiService.get<{ wallets: Wallet[] }>(API_ENDPOINTS.WALLETS.BASE);
   return response.wallets;
 });
 
-export const fetchWalletById = createAsyncThunk(
-  'wallet/fetchById',
-  async (id: number) => {
-    const response = await apiService.get<{ wallet: Wallet }>(API_ENDPOINTS.WALLETS.BY_ID(id));
-    return response.wallet;
-  }
-);
+export const fetchWalletById = createAsyncThunk('wallet/fetchById', async (id: number) => {
+  const response = await apiService.get<{ wallet: Wallet }>(API_ENDPOINTS.WALLETS.BY_ID(id));
+  return response.wallet;
+});
 
 export const fetchTransactions = createAsyncThunk(
   'wallet/fetchTransactions',
@@ -62,10 +58,7 @@ export const createTransaction = createAsyncThunk(
     amount: number;
     toAddress: string;
   }) => {
-    const response = await apiService.post<{ transaction: Transaction }>(
-      '/transactions',
-      txData
-    );
+    const response = await apiService.post<{ transaction: Transaction }>('/transactions', txData);
     return response.transaction;
   }
 );
@@ -77,14 +70,14 @@ const walletSlice = createSlice({
     selectWallet: (state, action: PayloadAction<Wallet>) => {
       state.selectedWallet = action.payload;
     },
-    clearMnemonic: (state) => {
+    clearMnemonic: state => {
       state.mnemonic = null;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       // createWallet
-      .addCase(createWallet.pending, (state) => {
+      .addCase(createWallet.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -98,7 +91,7 @@ const walletSlice = createSlice({
         state.error = action.error.message || strings.errors.failedToCreateWallet;
       })
       // fetchWallets
-      .addCase(fetchWallets.pending, (state) => {
+      .addCase(fetchWallets.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -112,7 +105,7 @@ const walletSlice = createSlice({
         state.error = action.error.message || strings.errors.failedToFetchWallets;
       })
       // fetchWalletById
-      .addCase(fetchWalletById.pending, (state) => {
+      .addCase(fetchWalletById.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -125,7 +118,7 @@ const walletSlice = createSlice({
         state.error = action.error.message || strings.errors.failedToFetchWallet;
       })
       // fetchTransactions
-      .addCase(fetchTransactions.pending, (state) => {
+      .addCase(fetchTransactions.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -138,7 +131,7 @@ const walletSlice = createSlice({
         state.error = action.error.message || strings.errors.failedToFetchTransactions;
       })
       // createTransaction
-      .addCase(createTransaction.pending, (state) => {
+      .addCase(createTransaction.pending, state => {
         state.loading = true;
         state.error = null;
       })

@@ -20,8 +20,8 @@ class ApiService {
 
   private setupInterceptors() {
     this.client.interceptors.response.use(
-      (response) => response,
-      (error) => {
+      response => response,
+      error => {
         if (error.response?.status === 401) {
           storageService.clearAuth();
           window.location.href = '/login';

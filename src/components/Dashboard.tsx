@@ -15,11 +15,13 @@ const STALE_THRESHOLD = 60000; // 1 minute
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { wallets, selectedWallet, loading, lastFetched } = useSelector((state: RootState) => state.wallet);
+  const { wallets, selectedWallet, loading, lastFetched } = useSelector(
+    (state: RootState) => state.wallet
+  );
   const [showCreateWallet, setShowCreateWallet] = useState(false);
 
   useEffect(() => {
-    const isStale = !lastFetched || (Date.now() - lastFetched > STALE_THRESHOLD);
+    const isStale = !lastFetched || Date.now() - lastFetched > STALE_THRESHOLD;
     if (isStale && !loading) {
       dispatch(fetchWallets());
     }
@@ -75,12 +77,10 @@ const Dashboard: React.FC = () => {
               ) : wallets.length === 0 ? (
                 <p className="empty-state">{strings.wallet.noWalletsYet}</p>
               ) : (
-                wallets.map((wallet) => (
+                wallets.map(wallet => (
                   <div
                     key={wallet.id}
-                    className={`wallet-item ${
-                      selectedWallet?.id === wallet.id ? 'active' : ''
-                    }`}
+                    className={`wallet-item ${selectedWallet?.id === wallet.id ? 'active' : ''}`}
                     onClick={() => handleSelectWallet(wallet)}
                   >
                     <div className="wallet-name">{wallet.name}</div>
@@ -109,10 +109,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {showCreateWallet && (
-        <CreateWallet
-          onClose={() => setShowCreateWallet(false)}
-          onCreate={handleCreateWallet}
-        />
+        <CreateWallet onClose={() => setShowCreateWallet(false)} onCreate={handleCreateWallet} />
       )}
     </div>
   );

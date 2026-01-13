@@ -20,21 +20,24 @@ export function useFormValidation<T extends Record<string, unknown>>(
 ): UseFormValidationReturn<T> {
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
 
-  const validate = useCallback((data: T): boolean => {
-    const newErrors: Partial<Record<keyof T, string>> = {};
-    let isValid = true;
+  const validate = useCallback(
+    (data: T): boolean => {
+      const newErrors: Partial<Record<keyof T, string>> = {};
+      let isValid = true;
 
-    Object.entries(rules).forEach(([field, validator]) => {
-      const error = validator(data[field], data);
-      if (error) {
-        newErrors[field as keyof T] = error;
-        isValid = false;
-      }
-    });
+      Object.entries(rules).forEach(([field, validator]) => {
+        const error = validator(data[field], data);
+        if (error) {
+          newErrors[field as keyof T] = error;
+          isValid = false;
+        }
+      });
 
-    setErrors(newErrors);
-    return isValid;
-  }, [rules]);
+      setErrors(newErrors);
+      return isValid;
+    },
+    [rules]
+  );
 
   const validateField = useCallback(
     (field: keyof T, value: unknown, formData: T): string | null => {
@@ -82,27 +85,30 @@ export function useFormValidation<T extends Record<string, unknown>>(
 
 // Common validation helpers
 export const validators = {
-  required: (message = 'This field is required') =>
-    (value: unknown) => !value ? message : null,
+  required:
+    (message = 'This field is required') =>
+    (value: unknown) =>
+      !value ? message : null,
 
-  email: (message = 'Please enter a valid email') =>
+  email:
+    (message = 'Please enter a valid email') =>
     (value: unknown) => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return value && !emailRegex.test(String(value)) ? message : null;
     },
 
-  minLength: (min: number, message?: string) =>
-    (value: unknown) => {
-      const str = String(value || '');
-      return str.length < min
-        ? message || `Must be at least ${min} characters`
-        : null;
-    },
+  minLength: (min: number, message?: string) => (value: unknown) => {
+    const str = String(value || '');
+    return str.length < min ? message || `Must be at least ${min} characters` : null;
+  },
 
-  pattern: (regex: RegExp, message = 'Invalid format') =>
-    (value: unknown) => value && !regex.test(String(value)) ? message : null,
+  pattern:
+    (regex: RegExp, message = 'Invalid format') =>
+    (value: unknown) =>
+      value && !regex.test(String(value)) ? message : null,
 
-  positive: (message = 'Must be a positive number') =>
+  positive:
+    (message = 'Must be a positive number') =>
     (value: unknown) => {
       const num = Number(value);
       return isNaN(num) || num <= 0 ? message : null;

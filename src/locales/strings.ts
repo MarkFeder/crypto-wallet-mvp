@@ -136,8 +136,7 @@ export const strings = {
     failedToFetchWallet: 'Failed to fetch wallet',
     failedToFetchTransactions: 'Failed to fetch transactions',
     failedToCreateTransaction: 'Failed to create transaction',
-    mustBeUsedWithinProvider: (hookName: string) =>
-      `${hookName} must be used within its Provider`,
+    mustBeUsedWithinProvider: (hookName: string) => `${hookName} must be used within its Provider`,
   },
 } as const;
 

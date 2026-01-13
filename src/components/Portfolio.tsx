@@ -4,7 +4,11 @@ import { RootState } from '../redux/store';
 import { Wallet, WalletAddress, Price } from '../types';
 import { formatCurrency, formatCrypto, formatPercentage } from '../utils/format';
 import { usePortfolioValue } from '../hooks';
-import { calculateCurrencyBalance, calculateAssetValue, safeParseFloat } from '../utils/calculations';
+import {
+  calculateCurrencyBalance,
+  calculateAssetValue,
+  safeParseFloat,
+} from '../utils/calculations';
 import { strings } from '../locales';
 
 interface PortfolioProps {
@@ -62,7 +66,9 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
                   {formatPercentage(data.change24h)}
                 </span>
               </div>
-              <div className="asset-balance">{formatCrypto(totalBalance)} {currency}</div>
+              <div className="asset-balance">
+                {formatCrypto(totalBalance)} {currency}
+              </div>
               <div className="asset-value">{formatCurrency(value)}</div>
               <div className="asset-price">{formatCurrency(safeParseFloat(data.price))}</div>
             </div>

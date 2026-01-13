@@ -38,17 +38,11 @@ const Toast: React.FC = () => {
 
   return (
     <div className="toast-container">
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          className={`toast ${getTypeStyles(toast.type)}`}
-        >
+      {toasts.map(toast => (
+        <div key={toast.id} className={`toast ${getTypeStyles(toast.type)}`}>
           <span className="toast-icon">{getIcon(toast.type)}</span>
           <span className="toast-message">{toast.message}</span>
-          <button
-            className="toast-close"
-            onClick={() => remove(toast.id)}
-          >
+          <button className="toast-close" onClick={() => remove(toast.id)}>
             ✕
           </button>
         </div>

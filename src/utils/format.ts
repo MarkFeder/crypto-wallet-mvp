@@ -18,7 +18,11 @@ export const formatPercentage = (value: number, decimals: number = 2): string =>
   return `${sign}${value.toFixed(decimals)}%`;
 };
 
-export const shortenAddress = (address: string, startLength: number = 6, endLength: number = 4): string => {
+export const shortenAddress = (
+  address: string,
+  startLength: number = 6,
+  endLength: number = 4
+): string => {
   if (!address || address.length < startLength + endLength) {
     return address;
   }

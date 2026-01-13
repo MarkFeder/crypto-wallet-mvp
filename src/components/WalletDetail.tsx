@@ -51,10 +51,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
               <div key={addr.currency} className="address-card">
                 <div className="address-header">
                   <span className="currency-badge">{addr.currency}</span>
-                  <button
-                    className="btn-small"
-                    onClick={() => handleSend(addr.currency)}
-                  >
+                  <button className="btn-small" onClick={() => handleSend(addr.currency)}>
                     {strings.transaction.send}
                   </button>
                 </div>
@@ -63,12 +60,13 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
                 </div>
                 <div className="address-value">{formatCurrency(value)}</div>
                 <div className="address-text" title={addr.address}>
-                  {shortenAddress(addr.address, APP_CONFIG.ADDRESS_DISPLAY.SHORT_START_LENGTH, APP_CONFIG.ADDRESS_DISPLAY.SHORT_END_LENGTH)}
+                  {shortenAddress(
+                    addr.address,
+                    APP_CONFIG.ADDRESS_DISPLAY.SHORT_START_LENGTH,
+                    APP_CONFIG.ADDRESS_DISPLAY.SHORT_END_LENGTH
+                  )}
                 </div>
-                <button
-                  className="btn-copy"
-                  onClick={() => copyToClipboard(addr.address)}
-                >
+                <button className="btn-copy" onClick={() => copyToClipboard(addr.address)}>
                   {strings.wallet.copyAddress}
                 </button>
               </div>
@@ -83,10 +81,11 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
           <p className="empty-state">{strings.transaction.noTransactionsYet}</p>
         ) : (
           <div className="transactions-list">
-            {transactions.map((tx) => (
+            {transactions.map(tx => (
               <div key={tx.id} className="transaction-item">
                 <div className="tx-type">
-                  {tx.type === 'send' ? '📤' : '📥'} {tx.type?.toUpperCase() || strings.common.unknown}
+                  {tx.type === 'send' ? '📤' : '📥'}{' '}
+                  {tx.type?.toUpperCase() || strings.common.unknown}
                 </div>
                 <div className="tx-details">
                   <div className="tx-currency">{tx.currency}</div>

@@ -28,25 +28,22 @@ export const login = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk(
-  'auth/logout',
-  async () => {
-    await apiService.post(API_ENDPOINTS.AUTH.LOGOUT);
-    storageService.clearAuth();
-  }
-);
+export const logout = createAsyncThunk('auth/logout', async () => {
+  await apiService.post(API_ENDPOINTS.AUTH.LOGOUT);
+  storageService.clearAuth();
+});
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(register.pending, (state) => {
+      .addCase(register.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -60,7 +57,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || strings.errors.registrationFailed;
       })
-      .addCase(login.pending, (state) => {
+      .addCase(login.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -74,7 +71,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || strings.errors.loginFailed;
       })
-      .addCase(logout.fulfilled, (state) => {
+      .addCase(logout.fulfilled, state => {
         state.user = null;
         state.isAuthenticated = false;
       });

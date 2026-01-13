@@ -12,11 +12,7 @@ interface SendTransactionProps {
   onClose: () => void;
 }
 
-const SendTransaction: React.FC<SendTransactionProps> = ({
-  walletId,
-  currency,
-  onClose,
-}) => {
+const SendTransaction: React.FC<SendTransactionProps> = ({ walletId, currency, onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useToast();
   const [toAddress, setToAddress] = useState('');
@@ -58,7 +54,7 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
         <input
           type="text"
           value={toAddress}
-          onChange={(e) => setToAddress(e.target.value)}
+          onChange={e => setToAddress(e.target.value)}
           placeholder={strings.transaction.recipientAddressPlaceholder}
         />
       </div>
@@ -69,14 +65,12 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
           type="number"
           step="0.00000001"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={e => setAmount(e.target.value)}
           placeholder={strings.transaction.amountPlaceholder}
         />
       </div>
 
-      <div className="info-box">
-        ℹ️ {strings.transaction.demoNotice}
-      </div>
+      <div className="info-box">ℹ️ {strings.transaction.demoNotice}</div>
 
       <div className="modal-actions">
         <button onClick={onClose} className="btn-secondary" disabled={loading}>

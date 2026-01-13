@@ -16,10 +16,12 @@ const initialState: PriceState = {
 };
 
 export const fetchPrices = createAsyncThunk('price/fetchAll', async () => {
-  const response = await apiService.get<{ success: boolean; prices: Price[] }>(API_ENDPOINTS.PRICES.BASE);
+  const response = await apiService.get<{ success: boolean; prices: Price[] }>(
+    API_ENDPOINTS.PRICES.BASE
+  );
 
   const priceMap: Record<string, Price> = {};
-  response.prices.forEach((price) => {
+  response.prices.forEach(price => {
     priceMap[price.symbol] = price;
   });
 
@@ -30,9 +32,9 @@ const priceSlice = createSlice({
   name: 'price',
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(fetchPrices.pending, (state) => {
+      .addCase(fetchPrices.pending, state => {
         state.loading = true;
       })
       .addCase(fetchPrices.fulfilled, (state, action) => {

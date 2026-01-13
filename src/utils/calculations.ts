@@ -21,10 +21,7 @@ export const safeParseFloat = (value: string | number, fallback: number = 0): nu
  * @param price - The price per unit in USD (can be string or number)
  * @returns The total value in USD
  */
-export const calculateAssetValue = (
-  balance: string | number,
-  price: string | number
-): number => {
+export const calculateAssetValue = (balance: string | number, price: string | number): number => {
   const balanceNum = safeParseFloat(balance);
   const priceNum = safeParseFloat(price);
   return balanceNum * priceNum;
@@ -90,7 +87,7 @@ export const calculateCurrencyBalance = (
   currency: string
 ): number => {
   return wallets.reduce((sum, wallet) => {
-    const addr = wallet.addresses.find((a) => a.currency === currency);
+    const addr = wallet.addresses.find(a => a.currency === currency);
     return sum + (addr ? safeParseFloat(addr.balance) : 0);
   }, 0);
 };
@@ -137,5 +134,5 @@ export const hasSufficientBalance = (
   const amountNum = safeParseFloat(amount);
   const feeNum = safeParseFloat(fee);
 
-  return balanceNum >= (amountNum + feeNum);
+  return balanceNum >= amountNum + feeNum;
 };

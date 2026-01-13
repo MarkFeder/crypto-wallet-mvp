@@ -27,7 +27,7 @@ async function updateTokenBalance(walletAddress, token, newBalance) {
   await db.query(queries.transaction.updateAssetBalance, [
     newBalance.toString(),
     walletAddress,
-    token
+    token,
   ]);
 }
 
@@ -43,7 +43,7 @@ async function createOrUpdateDestinationBalance(walletAddress, toToken, amountTo
       walletAddress,
       toToken,
       toToken,
-      amountToAdd.toString()
+      amountToAdd.toString(),
     ]);
   } else {
     // Update existing asset
@@ -71,7 +71,14 @@ async function createSwapTransaction(walletAddress, fromToken, toToken, fromAmou
 /**
  * Execute the swap by updating balances
  */
-async function executeSwap(walletAddress, fromToken, toToken, fromAmount, toAmount, currentFromBalance) {
+async function executeSwap(
+  walletAddress,
+  fromToken,
+  toToken,
+  fromAmount,
+  toAmount,
+  currentFromBalance
+) {
   // Deduct from source token
   const newFromBalance = currentFromBalance - safeParseFloat(fromAmount);
   await updateTokenBalance(walletAddress, fromToken, newFromBalance);

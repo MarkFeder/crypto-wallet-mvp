@@ -8,12 +8,33 @@ const {
   swapTokensSchema,
   addressParamSchema,
   txHashParamSchema,
-  paginationQuerySchema
+  paginationQuerySchema,
 } = require('../schemas/transactionSchemas');
 
-router.post('/send', authenticateToken, validate(sendTransactionSchema), transactionController.sendTransaction);
-router.post('/swap', authenticateToken, validate(swapTokensSchema), transactionController.swapTokens);
-router.get('/history/:address', authenticateToken, validateParams(addressParamSchema), validateQuery(paginationQuerySchema), transactionController.getTransactionHistory);
-router.get('/:txHash', authenticateToken, validateParams(txHashParamSchema), transactionController.getTransactionDetails);
+router.post(
+  '/send',
+  authenticateToken,
+  validate(sendTransactionSchema),
+  transactionController.sendTransaction
+);
+router.post(
+  '/swap',
+  authenticateToken,
+  validate(swapTokensSchema),
+  transactionController.swapTokens
+);
+router.get(
+  '/history/:address',
+  authenticateToken,
+  validateParams(addressParamSchema),
+  validateQuery(paginationQuerySchema),
+  transactionController.getTransactionHistory
+);
+router.get(
+  '/:txHash',
+  authenticateToken,
+  validateParams(txHashParamSchema),
+  transactionController.getTransactionDetails
+);
 
 module.exports = router;

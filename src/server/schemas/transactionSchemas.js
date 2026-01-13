@@ -5,80 +5,64 @@ const ethAddressPattern = /^0x[a-fA-F0-9]{40}$/;
 const supportedTokens = ['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT'];
 
 const sendTransactionSchema = Joi.object({
-  fromAddress: Joi.string()
-    .pattern(ethAddressPattern)
-    .required()
-    .messages({
-      'string.pattern.base': strings.validation.transaction.fromAddressInvalid,
-      'any.required': strings.validation.transaction.fromAddressRequired
-    }),
-  toAddress: Joi.string()
-    .pattern(ethAddressPattern)
-    .required()
-    .messages({
-      'string.pattern.base': strings.validation.transaction.toAddressInvalid,
-      'any.required': strings.validation.transaction.toAddressRequired
-    }),
-  amount: Joi.number()
-    .positive()
-    .required()
-    .messages({
-      'number.positive': strings.validation.transaction.amountPositive,
-      'any.required': strings.validation.transaction.amountRequired
-    }),
+  fromAddress: Joi.string().pattern(ethAddressPattern).required().messages({
+    'string.pattern.base': strings.validation.transaction.fromAddressInvalid,
+    'any.required': strings.validation.transaction.fromAddressRequired,
+  }),
+  toAddress: Joi.string().pattern(ethAddressPattern).required().messages({
+    'string.pattern.base': strings.validation.transaction.toAddressInvalid,
+    'any.required': strings.validation.transaction.toAddressRequired,
+  }),
+  amount: Joi.number().positive().required().messages({
+    'number.positive': strings.validation.transaction.amountPositive,
+    'any.required': strings.validation.transaction.amountRequired,
+  }),
   tokenSymbol: Joi.string()
     .valid(...supportedTokens)
     .required()
     .messages({
       'any.only': strings.validation.transaction.tokenInvalid(supportedTokens.join(', ')),
-      'any.required': strings.validation.transaction.tokenRequired
-    })
+      'any.required': strings.validation.transaction.tokenRequired,
+    }),
 });
 
 const swapTokensSchema = Joi.object({
-  walletAddress: Joi.string()
-    .pattern(ethAddressPattern)
-    .required()
-    .messages({
-      'string.pattern.base': strings.validation.transaction.walletAddressInvalid,
-      'any.required': strings.validation.transaction.walletAddressRequired
-    }),
+  walletAddress: Joi.string().pattern(ethAddressPattern).required().messages({
+    'string.pattern.base': strings.validation.transaction.walletAddressInvalid,
+    'any.required': strings.validation.transaction.walletAddressRequired,
+  }),
   fromToken: Joi.string()
     .valid(...supportedTokens)
     .required()
     .messages({
       'any.only': strings.validation.transaction.fromTokenInvalid(supportedTokens.join(', ')),
-      'any.required': strings.validation.transaction.fromTokenRequired
+      'any.required': strings.validation.transaction.fromTokenRequired,
     }),
   toToken: Joi.string()
     .valid(...supportedTokens)
     .required()
     .messages({
       'any.only': strings.validation.transaction.toTokenInvalid(supportedTokens.join(', ')),
-      'any.required': strings.validation.transaction.toTokenRequired
+      'any.required': strings.validation.transaction.toTokenRequired,
     }),
-  fromAmount: Joi.number()
-    .positive()
-    .required()
-    .messages({
-      'number.positive': strings.validation.transaction.amountPositive,
-      'any.required': strings.validation.transaction.fromAmountRequired
-    })
+  fromAmount: Joi.number().positive().required().messages({
+    'number.positive': strings.validation.transaction.amountPositive,
+    'any.required': strings.validation.transaction.fromAmountRequired,
+  }),
 }).custom((value, helpers) => {
   if (value.fromToken === value.toToken) {
-    return helpers.error('any.invalid', { message: strings.validation.transaction.cannotSwapSameToken });
+    return helpers.error('any.invalid', {
+      message: strings.validation.transaction.cannotSwapSameToken,
+    });
   }
   return value;
 });
 
 const addressParamSchema = Joi.object({
-  address: Joi.string()
-    .pattern(ethAddressPattern)
-    .required()
-    .messages({
-      'string.pattern.base': strings.validation.transaction.addressInvalid,
-      'any.required': strings.validation.transaction.addressRequired
-    })
+  address: Joi.string().pattern(ethAddressPattern).required().messages({
+    'string.pattern.base': strings.validation.transaction.addressInvalid,
+    'any.required': strings.validation.transaction.addressRequired,
+  }),
 });
 
 const txHashParamSchema = Joi.object({
@@ -87,20 +71,13 @@ const txHashParamSchema = Joi.object({
     .required()
     .messages({
       'string.pattern.base': strings.validation.transaction.txHashInvalid,
-      'any.required': strings.validation.transaction.txHashRequired
-    })
+      'any.required': strings.validation.transaction.txHashRequired,
+    }),
 });
 
 const paginationQuerySchema = Joi.object({
-  limit: Joi.number()
-    .integer()
-    .min(1)
-    .max(100)
-    .default(50),
-  offset: Joi.number()
-    .integer()
-    .min(0)
-    .default(0)
+  limit: Joi.number().integer().min(1).max(100).default(50),
+  offset: Joi.number().integer().min(0).default(0),
 });
 
 module.exports = {
@@ -108,5 +85,5 @@ module.exports = {
   swapTokensSchema,
   addressParamSchema,
   txHashParamSchema,
-  paginationQuerySchema
+  paginationQuerySchema,
 };

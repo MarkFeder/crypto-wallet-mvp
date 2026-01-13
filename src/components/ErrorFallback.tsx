@@ -11,9 +11,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onReset }) => {
     <div className="error-fallback">
       <div className="error-content">
         <h2>{strings.errors.somethingWentWrong}</h2>
-        <p className="error-message">
-          {error?.message || strings.errors.unexpectedError}
-        </p>
+        <p className="error-message">{error?.message || strings.errors.unexpectedError}</p>
         <div className="error-actions">
           <button onClick={onReset} className="btn-primary">
             {strings.errors.tryAgain}
