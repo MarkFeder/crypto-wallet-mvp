@@ -3,42 +3,9 @@ import { User } from '../types';
 
 /**
  * Centralized storage service for managing localStorage operations
+ * Note: Auth tokens are now handled via HttpOnly cookies for security
  */
 class StorageService {
-  /**
-   * Get auth token from storage
-   */
-  getAuthToken(): string | null {
-    try {
-      return localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-    } catch (error) {
-      console.error('Error reading auth token from storage:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Set auth token in storage
-   */
-  setAuthToken(token: string): void {
-    try {
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-    } catch (error) {
-      console.error('Error saving auth token to storage:', error);
-    }
-  }
-
-  /**
-   * Remove auth token from storage
-   */
-  removeAuthToken(): void {
-    try {
-      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-    } catch (error) {
-      console.error('Error removing auth token from storage:', error);
-    }
-  }
-
   /**
    * Get user data from storage
    */
@@ -78,7 +45,6 @@ class StorageService {
    * Clear all auth-related data from storage
    */
   clearAuth(): void {
-    this.removeAuthToken();
     this.removeUser();
   }
 
@@ -94,10 +60,10 @@ class StorageService {
   }
 
   /**
-   * Check if user is authenticated (has valid token)
+   * Check if user is authenticated (has stored user data)
    */
   isAuthenticated(): boolean {
-    return !!this.getAuthToken();
+    return !!this.getUser();
   }
 }
 

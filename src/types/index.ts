@@ -6,7 +6,6 @@ export interface User {
 
 export interface AuthResponse {
   user: User;
-  token: string;
 }
 
 export interface Wallet {
@@ -76,7 +75,7 @@ export interface WalletState {
 
 export interface AuthState {
   user: User | null;
-  token: string | null;
+  isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
 }

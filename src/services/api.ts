@@ -8,28 +8,17 @@ class ApiService {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
+      timeout: 30000, // 30 second timeout
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true, // Required for HttpOnly cookies
     });
 
     this.setupInterceptors();
   }
 
   private setupInterceptors() {
-    this.client.interceptors.request.use(
-      (config) => {
-        const token = storageService.getAuthToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {

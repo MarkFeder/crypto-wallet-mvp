@@ -5,8 +5,8 @@ import { AuthState, AuthResponse } from '../types';
 import { API_ENDPOINTS } from '../constants/config';
 
 const initialState: AuthState = {
-  user: null,
-  token: storageService.getAuthToken(),
+  user: storageService.getUser(),
+  isAuthenticated: storageService.isAuthenticated(),
   loading: false,
   error: null,
 };
@@ -27,15 +27,18 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async () => {
+    await apiService.post(API_ENDPOINTS.AUTH.LOGOUT);
+    storageService.clearAuth();
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: (state) => {
-      state.user = null;
-      state.token = null;
-      storageService.clearAuth();
-    },
     clearError: (state) => {
       state.error = null;
     },
@@ -49,8 +52,7 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.token = action.payload.token;
-        storageService.setAuthToken(action.payload.token);
+        state.isAuthenticated = true;
         storageService.setUser(action.payload.user);
       })
       .addCase(register.rejected, (state, action) => {
@@ -64,16 +66,19 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.token = action.payload.token;
-        storageService.setAuthToken(action.payload.token);
+        state.isAuthenticated = true;
         storageService.setUser(action.payload.user);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Login failed';
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
       });
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { clearError } = authSlice.actions;
 export default authSlice.reducer;

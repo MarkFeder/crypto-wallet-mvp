@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
+    LOGOUT: '/auth/logout',
   },
   WALLETS: {
     BASE: '/wallets',
@@ -26,7 +27,6 @@ export const API_ENDPOINTS = {
 export const SUPPORTED_CURRENCIES = ['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT'];
 
 export const STORAGE_KEYS = {
-  AUTH_TOKEN: 'crypto_wallet_token',
   USER: 'crypto_wallet_user',
 };
 
