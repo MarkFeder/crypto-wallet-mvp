@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../redux/store';
 import { createTransaction } from '../redux/walletSlice';
 import { Modal } from './ui';
+import { useToast } from '../hooks';
 
 interface SendTransactionProps {
   walletId: number;
@@ -16,13 +17,14 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const toast = useToast();
   const [toAddress, setToAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
     if (!toAddress || !amount) {
-      alert('Please fill in all fields');
+      toast.warning('Please fill in all fields');
       return;
     }
 
@@ -37,10 +39,10 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
           toAddress,
         })
       );
-      alert('Transaction sent successfully!');
+      toast.success('Transaction sent successfully!');
       onClose();
     } catch (error) {
-      alert('Failed to send transaction');
+      toast.error('Failed to send transaction');
     } finally {
       setLoading(false);
     }
