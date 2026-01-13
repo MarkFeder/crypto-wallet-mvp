@@ -58,34 +58,63 @@ Open http://localhost:3000 and login with:
 ## 📜 Available Scripts
 
 ### Development
-```bash
-npm run dev          # Start both client and server
-npm run dev:client   # Start React dev server (port 3000)
-npm run dev:server   # Start Node.js server (port 5000)
-```
 
-### Database Management
-```bash
-npm run setup:db     # 🌟 Drop, recreate & seed (recommended)
-npm run test:db      # Test PostgreSQL connection
-npm run init:db      # Initialize database schema only
-npm run seed         # Add test data to existing database
-npm run reset:db     # Drop & recreate (asks confirmation)
-```
+| Script | Command | Description |
+|--------|---------|-------------|
+| `dev` | `npm run dev` | Starts both client and server in development mode concurrently |
+| `dev:client` | `npm run dev:client` | Starts the webpack dev server for the React frontend (port 3000) |
+| `dev:server` | `npm run dev:server` | Starts the Express server with nodemon for hot reloading (port 5000) |
 
 ### Build & Production
-```bash
-npm run build        # Build production bundle
-npm run start        # Start production server
-```
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `build` | `npm run build` | Builds the client for production using webpack |
+| `build:client` | `npm run build:client` | Alias for `build` - builds the React frontend |
+| `start` | `npm start` | Starts the production server |
+| `start:server` | `npm run start:server` | Alias for `start` - runs the Express server |
+
+### Database Setup
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `setup:db` | `npm run setup:db` | All-in-one database setup (drop, recreate, migrate, seed) |
+| `init:db` | `npm run init:db` | Initializes the database schema |
+| `reset:db` | `npm run reset:db` | Drops and recreates all database tables (destructive) |
+| `seed` | `npm run seed` | Seeds the database with a test user |
+| `test:db` | `npm run test:db` | Tests the database connection |
+
+### Database Migrations
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `migrate` | `npm run migrate` | Runs pending database migrations |
+| `migrate:up` | `npm run migrate:up` | Applies all pending migrations |
+| `migrate:down` | `npm run migrate:down` | Reverts the last migration |
+| `migrate:status` | `npm run migrate:status` | Shows the status of all migrations |
+| `migrate:dry` | `npm run migrate:dry` | Dry run - shows what migrations would be applied |
+| `migrate:create` | `npm run migrate:create` | Creates a new migration file |
+| `migrate:mark` | `npm run migrate:mark` | Marks a migration as complete without running it |
+
+### Testing
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `test` | `npm test` | Runs all tests using Jest |
+| `test:watch` | `npm run test:watch` | Runs tests in watch mode (re-runs on file changes) |
+| `test:coverage` | `npm run test:coverage` | Runs tests and generates a coverage report |
+| `test:unit` | `npm run test:unit` | Runs only unit tests (tests/unit directory) |
+| `test:api` | `npm run test:api` | Runs only API integration tests (tests/api directory) |
 
 ### Code Quality
-```bash
-npm run lint         # Check code style
-npm run lint:fix     # Fix linting issues
-npm run format       # Format code with Prettier
-npm run type-check   # TypeScript type checking
-```
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `lint` | `npm run lint` | Runs ESLint on the src directory |
+| `lint:fix` | `npm run lint:fix` | Runs ESLint and automatically fixes fixable issues |
+| `format` | `npm run format` | Formats code using Prettier |
+| `format:check` | `npm run format:check` | Checks if code is properly formatted |
+| `type-check` | `npm run type-check` | Runs TypeScript type checking without emitting files |
 
 ## 🏗️ Tech Stack
 
