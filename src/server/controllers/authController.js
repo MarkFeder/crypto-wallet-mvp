@@ -5,13 +5,14 @@ const { JWT_SECRET, COOKIE_OPTIONS } = require('../middleware/auth');
 const queries = require('../queries');
 const { sendSuccess, badRequest, unauthorized, serverError } = require('../utils/apiResponse');
 const { HTTP_STATUS } = require('../../constants/serverConfig');
+const { strings } = require('../locales/strings');
 
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return badRequest(res, 'All fields are required');
+      return badRequest(res, strings.auth.allFieldsRequired);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -27,9 +28,9 @@ const register = async (req, res) => {
     return sendSuccess(res, { user }, HTTP_STATUS.CREATED);
   } catch (error) {
     if (error.code === '23505') {
-      return badRequest(res, 'Username or email already exists');
+      return badRequest(res, strings.auth.usernameOrEmailExists);
     }
-    return serverError(res, 'Registration failed', error);
+    return serverError(res, strings.auth.registrationFailed, error);
   }
 };
 
@@ -41,7 +42,7 @@ const login = async (req, res) => {
     const user = result.rows[0];
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-      return unauthorized(res, 'Invalid credentials');
+      return unauthorized(res, strings.auth.invalidCredentials);
     }
 
     const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
@@ -53,7 +54,7 @@ const login = async (req, res) => {
       user: { id: user.id, username: user.username, email: user.email },
     });
   } catch (error) {
-    return serverError(res, 'Login failed', error);
+    return serverError(res, strings.auth.loginFailed, error);
   }
 };
 
@@ -63,7 +64,7 @@ const logout = async (req, res) => {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
   });
-  return sendSuccess(res, { message: 'Logged out successfully' });
+  return sendSuccess(res, { message: strings.auth.loggedOutSuccessfully });
 };
 
 module.exports = { register, login, logout };

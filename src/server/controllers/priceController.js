@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const queries = require('../queries');
+const { strings } = require('../locales/strings');
 
 // Simulated price data for MVP
 const MOCK_PRICES = {
@@ -59,7 +60,7 @@ exports.getPrices = async (req, res) => {
     console.error('Error getting prices:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get prices'
+      error: strings.price.failedToGetPrices
     });
   }
 };
@@ -74,7 +75,7 @@ exports.getTokenPrice = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Price not found for token'
+        error: strings.price.notFoundForToken
       });
     }
 
@@ -91,7 +92,7 @@ exports.getTokenPrice = async (req, res) => {
     console.error('Error getting token price:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get token price'
+      error: strings.price.failedToGetTokenPrice
     });
   }
 };
@@ -108,7 +109,7 @@ exports.getPriceHistory = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Price not found for token'
+        error: strings.price.notFoundForToken
       });
     }
 
@@ -140,7 +141,7 @@ exports.getPriceHistory = async (req, res) => {
     console.error('Error getting price history:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get price history'
+      error: strings.price.failedToGetHistory
     });
   }
 };

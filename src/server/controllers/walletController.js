@@ -3,6 +3,7 @@ const cryptoUtils = require('../utils/crypto-utils');
 const queries = require('../queries');
 const { sendSuccess, notFound, serverError } = require('../utils/apiResponse');
 const { HTTP_STATUS } = require('../../constants/serverConfig');
+const { strings } = require('../locales/strings');
 
 const createWallet = async (req, res) => {
   try {
@@ -29,7 +30,7 @@ const createWallet = async (req, res) => {
       },
     }, HTTP_STATUS.CREATED);
   } catch (error) {
-    return serverError(res, 'Failed to create wallet', error);
+    return serverError(res, strings.wallet.failedToCreate, error);
   }
 };
 
@@ -52,7 +53,7 @@ const getWallets = async (req, res) => {
 
     return sendSuccess(res, { wallets });
   } catch (error) {
-    return serverError(res, 'Failed to fetch wallets', error);
+    return serverError(res, strings.wallet.failedToFetch, error);
   }
 };
 
@@ -64,7 +65,7 @@ const getWalletById = async (req, res) => {
     const walletResult = await db.query(queries.wallet.findWalletByIdAndUserId, [walletId, userId]);
 
     if (walletResult.rows.length === 0) {
-      return notFound(res, 'Wallet not found');
+      return notFound(res, strings.wallet.notFound);
     }
 
     const wallet = walletResult.rows[0];
@@ -80,7 +81,7 @@ const getWalletById = async (req, res) => {
       },
     });
   } catch (error) {
-    return serverError(res, 'Failed to fetch wallet', error);
+    return serverError(res, strings.wallet.failedToFetchSingle, error);
   }
 };
 

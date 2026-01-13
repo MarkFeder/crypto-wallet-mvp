@@ -6,6 +6,7 @@ const { TRANSACTION_CONFIG, PAGINATION } = require('../../constants/serverConfig
 const { sendSuccess, badRequest, notFound, serverError } = require('../utils/apiResponse');
 const { safeParseFloat, calculateSwapWithFee, hasSufficientBalance, toFixedSafe } = require('../utils/calculations');
 const swapService = require('../services/swapService');
+const { strings } = require('../locales/strings');
 
 // Send transaction (simulated for MVP)
 exports.sendTransaction = async (req, res) => {
@@ -14,23 +15,23 @@ exports.sendTransaction = async (req, res) => {
     
     // Validate inputs
     if (!ethers.isAddress(fromAddress) || !ethers.isAddress(toAddress)) {
-      return badRequest(res, 'Invalid address format');
+      return badRequest(res, strings.transaction.invalidAddressFormat);
     }
 
     if (safeParseFloat(amount) <= 0) {
-      return badRequest(res, 'Invalid amount');
+      return badRequest(res, strings.transaction.invalidAmount);
     }
 
     // Check if wallet exists and has sufficient balance
     const assetResult = await db.query(queries.transaction.findAssetBalance, [fromAddress, tokenSymbol]);
 
     if (assetResult.rows.length === 0) {
-      return notFound(res, 'Asset not found in wallet');
+      return notFound(res, strings.transaction.assetNotFound);
     }
 
     const currentBalance = safeParseFloat(assetResult.rows[0].balance);
     if (!hasSufficientBalance(currentBalance, amount)) {
-      return badRequest(res, 'Insufficient balance');
+      return badRequest(res, strings.transaction.insufficientBalance);
     }
 
     // Generate simulated transaction hash
@@ -67,7 +68,7 @@ exports.sendTransaction = async (req, res) => {
       }
     });
   } catch (error) {
-    return serverError(res, 'Failed to send transaction', error);
+    return serverError(res, strings.transaction.failedToSend, error);
   }
 };
 
@@ -85,7 +86,7 @@ exports.getTransactionHistory = async (req, res) => {
       count: result.rows.length
     });
   } catch (error) {
-    return serverError(res, 'Failed to get transaction history', error);
+    return serverError(res, strings.transaction.failedToGetHistory, error);
   }
 };
 
@@ -97,14 +98,14 @@ exports.getTransactionDetails = async (req, res) => {
     const result = await db.query(queries.transaction.findTransactionByHash, [txHash]);
 
     if (result.rows.length === 0) {
-      return notFound(res, 'Transaction not found');
+      return notFound(res, strings.transaction.notFound);
     }
 
     return sendSuccess(res, {
       transaction: result.rows[0]
     });
   } catch (error) {
-    return serverError(res, 'Failed to get transaction details', error);
+    return serverError(res, strings.transaction.failedToGetDetails, error);
   }
 };
 
@@ -115,18 +116,18 @@ exports.swapTokens = async (req, res) => {
     
     // Validate inputs
     if (!walletAddress || !fromToken || !toToken || !fromAmount) {
-      return badRequest(res, 'Missing required fields');
+      return badRequest(res, strings.transaction.missingRequiredFields);
     }
 
     // Check balance of fromToken
     const fromAsset = await db.query(queries.transaction.findAssetBalance, [walletAddress, fromToken]);
 
     if (fromAsset.rows.length === 0) {
-      return badRequest(res, 'Asset not found in wallet');
+      return badRequest(res, strings.transaction.assetNotFound);
     }
 
     if (!hasSufficientBalance(fromAsset.rows[0].balance, fromAmount)) {
-      return badRequest(res, 'Insufficient balance for swap');
+      return badRequest(res, strings.transaction.insufficientBalanceForSwap);
     }
     
     // Get token prices
@@ -165,7 +166,7 @@ exports.swapTokens = async (req, res) => {
       }
     });
   } catch (error) {
-    return serverError(res, 'Failed to swap tokens', error);
+    return serverError(res, strings.transaction.failedToSwap, error);
   }
 };
 
