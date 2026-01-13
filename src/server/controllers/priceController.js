@@ -36,6 +36,9 @@ setInterval(updatePriceCache, 30000);
 // Get current prices for multiple tokens
 exports.getPrices = async (req, res) => {
   try {
+    // Set cache headers to reduce redundant requests
+    res.set('Cache-Control', 'public, max-age=10');
+
     const symbols = req.query.symbols ? req.query.symbols.split(',') : Object.keys(MOCK_PRICES);
 
     const result = await db.query(queries.price.findPricesBySymbols, [symbols]);

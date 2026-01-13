@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { Wallet, WalletAddress, Price } from '../types';
@@ -13,6 +13,19 @@ interface PortfolioProps {
 const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
   const { prices } = useSelector((state: RootState) => state.price);
   const totalValue = usePortfolioValue(wallets, prices);
+
+  // Memoize expensive calculations
+  const currencyBreakdown = useMemo(() => {
+    return Object.entries(prices).map(([currency, data]: [string, Price]) => {
+      const totalBalance = calculateCurrencyBalance(wallets, currency);
+      const value = calculateAssetValue(totalBalance, data.price);
+      return { currency, data, totalBalance, value };
+    });
+  }, [wallets, prices]);
+
+  const totalAssets = useMemo(() => {
+    return wallets.reduce((sum, w) => sum + w.addresses.length, 0);
+  }, [wallets]);
 
   return (
     <div className="portfolio">
@@ -33,33 +46,26 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
 
         <div className="stat-card">
           <div className="stat-label">Active Assets</div>
-          <div className="stat-value">
-            {wallets.reduce((sum, w) => sum + w.addresses.length, 0)}
-          </div>
+          <div className="stat-value">{totalAssets}</div>
         </div>
       </div>
 
       <div className="assets-section">
         <h3>Assets by Currency</h3>
         <div className="assets-grid">
-          {Object.entries(prices).map(([currency, data]: [string, Price]) => {
-            const totalBalance = calculateCurrencyBalance(wallets, currency);
-            const value = calculateAssetValue(totalBalance, data.price);
-
-            return (
-              <div key={currency} className="asset-card">
-                <div className="asset-header">
-                  <span className="asset-name">{currency}</span>
-                  <span className={`asset-change ${data.change24h >= 0 ? 'positive' : 'negative'}`}>
-                    {formatPercentage(data.change24h)}
-                  </span>
-                </div>
-                <div className="asset-balance">{formatCrypto(totalBalance)} {currency}</div>
-                <div className="asset-value">{formatCurrency(value)}</div>
-                <div className="asset-price">{formatCurrency(safeParseFloat(data.price))}</div>
+          {currencyBreakdown.map(({ currency, data, totalBalance, value }) => (
+            <div key={currency} className="asset-card">
+              <div className="asset-header">
+                <span className="asset-name">{currency}</span>
+                <span className={`asset-change ${data.change24h >= 0 ? 'positive' : 'negative'}`}>
+                  {formatPercentage(data.change24h)}
+                </span>
               </div>
-            );
-          })}
+              <div className="asset-balance">{formatCrypto(totalBalance)} {currency}</div>
+              <div className="asset-value">{formatCurrency(value)}</div>
+              <div className="asset-price">{formatCurrency(safeParseFloat(data.price))}</div>
+            </div>
+          ))}
         </div>
       </div>
 
