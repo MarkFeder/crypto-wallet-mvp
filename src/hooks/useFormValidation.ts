@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-type ValidationRule<T> = (value: T[keyof T], formData: T) => string | null;
+type ValidationRule<T> = (value: unknown, formData: T) => string | null;
 
 interface ValidationRules<T> {
   [field: string]: ValidationRule<T>;
@@ -9,7 +9,7 @@ interface ValidationRules<T> {
 interface UseFormValidationReturn<T> {
   errors: Partial<Record<keyof T, string>>;
   validate: (data: T) => boolean;
-  validateField: (field: keyof T, value: T[keyof T], formData: T) => string | null;
+  validateField: (field: keyof T, value: unknown, formData: T) => string | null;
   clearErrors: () => void;
   clearFieldError: (field: keyof T) => void;
   setFieldError: (field: keyof T, error: string) => void;
@@ -37,7 +37,7 @@ export function useFormValidation<T extends Record<string, unknown>>(
   }, [rules]);
 
   const validateField = useCallback(
-    (field: keyof T, value: T[keyof T], formData: T): string | null => {
+    (field: keyof T, value: unknown, formData: T): string | null => {
       const validator = rules[field as string];
       if (!validator) return null;
 
