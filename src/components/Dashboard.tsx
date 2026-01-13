@@ -7,16 +7,22 @@ import { Wallet } from '../types';
 import Portfolio from './Portfolio';
 import WalletDetail from './WalletDetail';
 import CreateWallet from './CreateWallet';
+import { Skeleton, Spinner } from './ui';
+
+const STALE_THRESHOLD = 60000; // 1 minute
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { wallets, selectedWallet } = useSelector((state: RootState) => state.wallet);
+  const { wallets, selectedWallet, loading, lastFetched } = useSelector((state: RootState) => state.wallet);
   const [showCreateWallet, setShowCreateWallet] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchWallets());
-  }, [dispatch]);
+    const isStale = !lastFetched || (Date.now() - lastFetched > STALE_THRESHOLD);
+    if (isStale && !loading) {
+      dispatch(fetchWallets());
+    }
+  }, [dispatch, lastFetched, loading]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -61,7 +67,11 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="wallet-list">
-              {wallets.length === 0 ? (
+              {loading && wallets.length === 0 ? (
+                <div className="wallet-loading">
+                  <Skeleton height={60} count={3} className="wallet-skeleton" />
+                </div>
+              ) : wallets.length === 0 ? (
                 <p className="empty-state">No wallets yet. Create one!</p>
               ) : (
                 wallets.map((wallet) => (
@@ -84,7 +94,12 @@ const Dashboard: React.FC = () => {
         </aside>
 
         <main className="main-content">
-          {selectedWallet ? (
+          {loading && wallets.length === 0 ? (
+            <div className="main-loading">
+              <Spinner size="large" />
+              <p>Loading your portfolio...</p>
+            </div>
+          ) : selectedWallet ? (
             <WalletDetail wallet={selectedWallet} />
           ) : (
             <Portfolio wallets={wallets} />
