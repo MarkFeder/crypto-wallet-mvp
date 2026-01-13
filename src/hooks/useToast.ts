@@ -1,11 +1,12 @@
 import { useContext } from 'react';
 import { ToastContext } from '../context/ToastContext';
+import { strings } from '../locales';
 
 export const useToast = () => {
   const context = useContext(ToastContext);
 
   if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
+    throw new Error(strings.errors.mustBeUsedWithinProvider('useToast'));
   }
 
   return {

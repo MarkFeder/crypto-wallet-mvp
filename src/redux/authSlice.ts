@@ -3,6 +3,7 @@ import { apiService } from '../services/api';
 import { storageService } from '../services/storageService';
 import { AuthState, AuthResponse } from '../types';
 import { API_ENDPOINTS } from '../constants/config';
+import { strings } from '../locales';
 
 const initialState: AuthState = {
   user: storageService.getUser(),
@@ -57,7 +58,7 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Registration failed';
+        state.error = action.error.message || strings.errors.registrationFailed;
       })
       .addCase(login.pending, (state) => {
         state.loading = true;
@@ -71,7 +72,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Login failed';
+        state.error = action.error.message || strings.errors.loginFailed;
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;

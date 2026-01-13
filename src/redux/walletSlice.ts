@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { apiService } from '../services/api';
 import { Wallet, Transaction, WalletState, CreateWalletResponse } from '../types';
 import { API_ENDPOINTS } from '../constants/config';
+import { strings } from '../locales';
 
 interface ExtendedWalletState extends WalletState {
   selectedWallet: Wallet | null;
@@ -94,7 +95,7 @@ const walletSlice = createSlice({
       })
       .addCase(createWallet.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to create wallet';
+        state.error = action.error.message || strings.errors.failedToCreateWallet;
       })
       // fetchWallets
       .addCase(fetchWallets.pending, (state) => {
@@ -108,7 +109,7 @@ const walletSlice = createSlice({
       })
       .addCase(fetchWallets.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch wallets';
+        state.error = action.error.message || strings.errors.failedToFetchWallets;
       })
       // fetchWalletById
       .addCase(fetchWalletById.pending, (state) => {
@@ -121,7 +122,7 @@ const walletSlice = createSlice({
       })
       .addCase(fetchWalletById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch wallet';
+        state.error = action.error.message || strings.errors.failedToFetchWallet;
       })
       // fetchTransactions
       .addCase(fetchTransactions.pending, (state) => {
@@ -134,7 +135,7 @@ const walletSlice = createSlice({
       })
       .addCase(fetchTransactions.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch transactions';
+        state.error = action.error.message || strings.errors.failedToFetchTransactions;
       })
       // createTransaction
       .addCase(createTransaction.pending, (state) => {
@@ -147,7 +148,7 @@ const walletSlice = createSlice({
       })
       .addCase(createTransaction.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to create transaction';
+        state.error = action.error.message || strings.errors.failedToCreateTransaction;
       });
   },
 });
