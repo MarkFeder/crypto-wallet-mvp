@@ -66,7 +66,7 @@ export const calculatePortfolioValue = (
   let total = 0;
 
   for (const wallet of wallets) {
-    for (const address of wallet.addresses) {
+    for (const address of wallet.addresses || []) {
       const price = safeParseFloat(prices[address.currency]?.price || 0);
       const balance = safeParseFloat(address.balance);
       total += balance * price;
@@ -87,7 +87,7 @@ export const calculateCurrencyBalance = (
   currency: string
 ): number => {
   return wallets.reduce((sum, wallet) => {
-    const addr = wallet.addresses.find(a => a.currency === currency);
+    const addr = (wallet.addresses || []).find(a => a.currency === currency);
     return sum + (addr ? safeParseFloat(addr.balance) : 0);
   }, 0);
 };

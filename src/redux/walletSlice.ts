@@ -84,7 +84,16 @@ const walletSlice = createSlice({
       .addCase(createWallet.fulfilled, (state, action) => {
         state.loading = false;
         state.mnemonic = action.payload.mnemonic;
-        state.wallets.push(action.payload.wallet);
+        // Construct wallet with addresses array from the response
+        const walletWithAddresses: Wallet = {
+          ...action.payload.wallet,
+          addresses: Object.entries(action.payload.addresses).map(([currency, address]) => ({
+            currency,
+            address: address as string,
+            balance: '0',
+          })),
+        };
+        state.wallets.push(walletWithAddresses);
       })
       .addCase(createWallet.rejected, (state, action) => {
         state.loading = false;

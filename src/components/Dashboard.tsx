@@ -85,7 +85,7 @@ const Dashboard: React.FC = () => {
                   >
                     <div className="wallet-name">{wallet.name}</div>
                     <div className="wallet-assets">
-                      {wallet.addresses.length} {strings.common.assets}
+                      {wallet.addresses?.length || 0} {strings.common.assets}
                     </div>
                   </div>
                 ))

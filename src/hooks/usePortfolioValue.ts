@@ -5,7 +5,7 @@ export const usePortfolioValue = (wallets: Wallet[], prices: Record<string, Pric
   return useMemo(() => {
     let total = 0;
     wallets.forEach(wallet => {
-      wallet.addresses.forEach(addr => {
+      (wallet.addresses || []).forEach(addr => {
         const price = parseFloat(prices[addr.currency]?.price || '0');
         total += parseFloat(addr.balance) * price;
       });

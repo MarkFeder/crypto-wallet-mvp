@@ -29,7 +29,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ wallets }) => {
   }, [wallets, prices]);
 
   const totalAssets = useMemo(() => {
-    return wallets.reduce((sum, w) => sum + w.addresses.length, 0);
+    return wallets.reduce((sum, w) => sum + (w.addresses?.length || 0), 0);
   }, [wallets]);
 
   return (

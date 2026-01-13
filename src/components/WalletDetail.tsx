@@ -43,7 +43,7 @@ const WalletDetail: React.FC<WalletDetailProps> = ({ wallet }) => {
       <div className="addresses-section">
         <h3>{strings.wallet.addressesAndBalances}</h3>
         <div className="addresses-grid">
-          {wallet.addresses.map((addr: WalletAddress) => {
+          {(wallet.addresses || []).map((addr: WalletAddress) => {
             const price = safeParseFloat(prices[addr.currency]?.price || '0');
             const value = calculateAssetValue(addr.balance, price);
 
