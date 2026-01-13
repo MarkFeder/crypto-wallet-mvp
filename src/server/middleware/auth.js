@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { strings } = require('../locales/strings');
 
 // Security: Require JWT_SECRET from environment - no fallback
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -19,12 +20,12 @@ const authenticateToken = (req, res, next) => {
   const token = req.cookies?.auth_token;
 
   if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
+    return res.status(401).json({ error: strings.auth.accessTokenRequired });
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ error: 'Invalid token' });
+      return res.status(403).json({ error: strings.auth.invalidToken });
     }
     req.user = user;
     next();

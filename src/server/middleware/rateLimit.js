@@ -1,4 +1,5 @@
 const rateLimit = require('express-rate-limit');
+const { strings } = require('../locales/strings');
 
 // Rate limiter for authentication endpoints (login/register)
 const authLimiter = rateLimit({
@@ -6,7 +7,7 @@ const authLimiter = rateLimit({
   max: 5, // 5 attempts per window
   message: {
     success: false,
-    error: 'Too many login attempts, please try again after 15 minutes'
+    error: strings.rateLimit.tooManyLoginAttempts
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -18,7 +19,7 @@ const apiLimiter = rateLimit({
   max: 100, // 100 requests per minute
   message: {
     success: false,
-    error: 'Too many requests, please slow down'
+    error: strings.rateLimit.tooManyRequests
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -30,7 +31,7 @@ const transactionLimiter = rateLimit({
   max: 10, // 10 transactions per minute
   message: {
     success: false,
-    error: 'Too many transaction requests, please wait a moment'
+    error: strings.rateLimit.tooManyTransactionRequests
   },
   standardHeaders: true,
   legacyHeaders: false,

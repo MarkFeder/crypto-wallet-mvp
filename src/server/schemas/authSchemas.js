@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { strings } = require('../locales/strings');
 
 const registerSchema = Joi.object({
   username: Joi.string()
@@ -7,26 +8,26 @@ const registerSchema = Joi.object({
     .max(30)
     .required()
     .messages({
-      'string.min': 'Username must be at least 3 characters',
-      'string.max': 'Username must be at most 30 characters',
-      'string.alphanum': 'Username must only contain alphanumeric characters',
-      'any.required': 'Username is required'
+      'string.min': strings.validation.auth.usernameMinLength,
+      'string.max': strings.validation.auth.usernameMaxLength,
+      'string.alphanum': strings.validation.auth.usernameAlphanumeric,
+      'any.required': strings.validation.auth.usernameRequired
     }),
   email: Joi.string()
     .email()
     .required()
     .messages({
-      'string.email': 'Please provide a valid email address',
-      'any.required': 'Email is required'
+      'string.email': strings.validation.auth.emailInvalid,
+      'any.required': strings.validation.auth.emailRequired
     }),
   password: Joi.string()
     .min(8)
     .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .required()
     .messages({
-      'string.min': 'Password must be at least 8 characters',
-      'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
-      'any.required': 'Password is required'
+      'string.min': strings.validation.auth.passwordMinLength,
+      'string.pattern.base': strings.validation.auth.passwordRequirements,
+      'any.required': strings.validation.auth.passwordRequired
     })
 });
 
@@ -35,13 +36,13 @@ const loginSchema = Joi.object({
     .email()
     .required()
     .messages({
-      'string.email': 'Please provide a valid email address',
-      'any.required': 'Email is required'
+      'string.email': strings.validation.auth.emailInvalid,
+      'any.required': strings.validation.auth.emailRequired
     }),
   password: Joi.string()
     .required()
     .messages({
-      'any.required': 'Password is required'
+      'any.required': strings.validation.auth.passwordRequired
     })
 });
 

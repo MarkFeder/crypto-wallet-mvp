@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { strings } = require('../locales/strings');
 
 const ethAddressPattern = /^0x[a-fA-F0-9]{40}$/;
 const supportedTokens = ['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'DOT'];
@@ -8,29 +9,29 @@ const sendTransactionSchema = Joi.object({
     .pattern(ethAddressPattern)
     .required()
     .messages({
-      'string.pattern.base': 'From address must be a valid Ethereum address',
-      'any.required': 'From address is required'
+      'string.pattern.base': strings.validation.transaction.fromAddressInvalid,
+      'any.required': strings.validation.transaction.fromAddressRequired
     }),
   toAddress: Joi.string()
     .pattern(ethAddressPattern)
     .required()
     .messages({
-      'string.pattern.base': 'To address must be a valid Ethereum address',
-      'any.required': 'To address is required'
+      'string.pattern.base': strings.validation.transaction.toAddressInvalid,
+      'any.required': strings.validation.transaction.toAddressRequired
     }),
   amount: Joi.number()
     .positive()
     .required()
     .messages({
-      'number.positive': 'Amount must be greater than 0',
-      'any.required': 'Amount is required'
+      'number.positive': strings.validation.transaction.amountPositive,
+      'any.required': strings.validation.transaction.amountRequired
     }),
   tokenSymbol: Joi.string()
     .valid(...supportedTokens)
     .required()
     .messages({
-      'any.only': `Token must be one of: ${supportedTokens.join(', ')}`,
-      'any.required': 'Token symbol is required'
+      'any.only': strings.validation.transaction.tokenInvalid(supportedTokens.join(', ')),
+      'any.required': strings.validation.transaction.tokenRequired
     })
 });
 
@@ -39,33 +40,33 @@ const swapTokensSchema = Joi.object({
     .pattern(ethAddressPattern)
     .required()
     .messages({
-      'string.pattern.base': 'Wallet address must be a valid Ethereum address',
-      'any.required': 'Wallet address is required'
+      'string.pattern.base': strings.validation.transaction.walletAddressInvalid,
+      'any.required': strings.validation.transaction.walletAddressRequired
     }),
   fromToken: Joi.string()
     .valid(...supportedTokens)
     .required()
     .messages({
-      'any.only': `From token must be one of: ${supportedTokens.join(', ')}`,
-      'any.required': 'From token is required'
+      'any.only': strings.validation.transaction.fromTokenInvalid(supportedTokens.join(', ')),
+      'any.required': strings.validation.transaction.fromTokenRequired
     }),
   toToken: Joi.string()
     .valid(...supportedTokens)
     .required()
     .messages({
-      'any.only': `To token must be one of: ${supportedTokens.join(', ')}`,
-      'any.required': 'To token is required'
+      'any.only': strings.validation.transaction.toTokenInvalid(supportedTokens.join(', ')),
+      'any.required': strings.validation.transaction.toTokenRequired
     }),
   fromAmount: Joi.number()
     .positive()
     .required()
     .messages({
-      'number.positive': 'Amount must be greater than 0',
-      'any.required': 'From amount is required'
+      'number.positive': strings.validation.transaction.amountPositive,
+      'any.required': strings.validation.transaction.fromAmountRequired
     })
 }).custom((value, helpers) => {
   if (value.fromToken === value.toToken) {
-    return helpers.error('any.invalid', { message: 'Cannot swap to the same token' });
+    return helpers.error('any.invalid', { message: strings.validation.transaction.cannotSwapSameToken });
   }
   return value;
 });
@@ -75,8 +76,8 @@ const addressParamSchema = Joi.object({
     .pattern(ethAddressPattern)
     .required()
     .messages({
-      'string.pattern.base': 'Address must be a valid Ethereum address',
-      'any.required': 'Address is required'
+      'string.pattern.base': strings.validation.transaction.addressInvalid,
+      'any.required': strings.validation.transaction.addressRequired
     })
 });
 
@@ -85,8 +86,8 @@ const txHashParamSchema = Joi.object({
     .pattern(/^0x[a-fA-F0-9]{64}$/)
     .required()
     .messages({
-      'string.pattern.base': 'Transaction hash must be a valid hex string',
-      'any.required': 'Transaction hash is required'
+      'string.pattern.base': strings.validation.transaction.txHashInvalid,
+      'any.required': strings.validation.transaction.txHashRequired
     })
 });
 

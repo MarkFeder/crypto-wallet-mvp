@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { strings } = require('../locales/strings');
 
 const createWalletSchema = Joi.object({
   name: Joi.string()
@@ -6,9 +7,9 @@ const createWalletSchema = Joi.object({
     .max(50)
     .required()
     .messages({
-      'string.min': 'Wallet name cannot be empty',
-      'string.max': 'Wallet name must be at most 50 characters',
-      'any.required': 'Wallet name is required'
+      'string.min': strings.validation.wallet.nameEmpty,
+      'string.max': strings.validation.wallet.nameMaxLength,
+      'any.required': strings.validation.wallet.nameRequired
     })
 });
 
@@ -18,9 +19,9 @@ const walletIdParamSchema = Joi.object({
     .positive()
     .required()
     .messages({
-      'number.base': 'Wallet ID must be a number',
-      'number.positive': 'Wallet ID must be positive',
-      'any.required': 'Wallet ID is required'
+      'number.base': strings.validation.wallet.idMustBeNumber,
+      'number.positive': strings.validation.wallet.idMustBePositive,
+      'any.required': strings.validation.wallet.idRequired
     })
 });
 
