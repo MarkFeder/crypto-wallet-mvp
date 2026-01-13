@@ -57,7 +57,7 @@ credentials.json
 Thumbs.db
 .DS_Store
 
-# Claude Code
-.claude/
-tmpclaude-*
+# Local tool configs
+.*aude/
+tmp*aude-*
 nul
