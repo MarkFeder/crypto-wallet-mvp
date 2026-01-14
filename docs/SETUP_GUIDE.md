@@ -39,7 +39,10 @@ createdb -U postgres crypto_wallet
 ### 2. Environment Configuration
 
 ```bash
-# Generate a secure encryption key
+# Copy the example environment file
+cp src/config/.env.example .env
+
+# Generate a secure JWT secret
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 # Copy output and update .env file
@@ -299,12 +302,68 @@ curl http://localhost:3001/api/prices
 curl http://localhost:3001/health
 ```
 
+## Cloud Deployment
+
+The application is configured for deployment on Vercel with Neon PostgreSQL.
+
+### Deploy to Vercel + Neon
+
+#### 1. Set Up Neon Database
+
+1. Create account at https://neon.tech
+2. Create a new project (e.g., "crypto-wallet")
+3. Copy the connection string from the dashboard
+
+#### 2. Deploy to Vercel
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy (follow prompts)
+vercel
+
+# Set environment variables
+vercel env add DATABASE_URL
+vercel env add JWT_SECRET
+```
+
+#### 3. Run Migrations on Neon
+
+```bash
+# Set DATABASE_URL temporarily
+export DATABASE_URL="postgresql://..."
+
+# Run migrations
+npx node-pg-migrate up -f src/config/migrate.config.js
+```
+
+#### 4. (Optional) Add Rate Limiting
+
+1. Create account at https://upstash.com
+2. Create a Redis database
+3. Add environment variables in Vercel:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+
+### Environment Variables for Cloud
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | Neon PostgreSQL connection string |
+| `JWT_SECRET` | Yes | Secret for JWT signing (min 32 chars) |
+| `UPSTASH_REDIS_REST_URL` | No | Rate limiting (Upstash Redis) |
+| `UPSTASH_REDIS_REST_TOKEN` | No | Rate limiting token |
+
 ## Next Steps
 
 1. **Customize**: Modify colors, add features
-2. **Deploy**: Consider deploying to Heroku, AWS, or DigitalOcean
+2. **Scale**: Add more Neon database branches for staging
 3. **Enhance**: Add more tokens, real blockchain integration
-4. **Learn**: Study the codebase, understand React+Redux patterns
+4. **Monitor**: Set up Vercel Analytics and logging
 
 ## Getting Help
 

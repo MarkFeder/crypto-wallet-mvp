@@ -56,13 +56,44 @@ The Crypto Wallet MVP is a full-stack application that simulates cryptocurrency 
 
 ## Architecture Layers
 
-The codebase is organized into three main directories:
+The codebase is organized for both local development and Vercel serverless deployment:
 
 ```
-src/
-├── client/              # Frontend React application
-├── common/              # Shared code (types, constants)
-└── server/              # Backend Express API
+crypto-wallet-mvp/
+├── api/                 # Vercel Serverless Functions (production)
+├── src/
+│   ├── client/          # Frontend React application
+│   ├── common/          # Shared code (types, constants)
+│   ├── config/          # Configuration files
+│   └── server/          # Backend Express API (local development)
+```
+
+### Serverless API Layer (`api/`)
+
+```
+api/
+├── _lib/                # Shared utilities
+│   ├── auth.js          # JWT authentication
+│   ├── db.js            # Database connection (Neon PostgreSQL)
+│   ├── cors.js          # CORS handling
+│   ├── rate-limit.js    # Upstash Redis rate limiting
+│   ├── validate.js      # Joi validation
+│   └── crypto-utils.js  # BIP39/BIP44 operations
+├── auth/                # Authentication endpoints
+│   ├── login.js         # POST /api/auth/login
+│   ├── register.js      # POST /api/auth/register
+│   ├── logout.js        # POST /api/auth/logout
+│   └── me.js            # GET /api/auth/me
+├── wallets/             # Wallet endpoints
+│   ├── index.js         # GET/POST /api/wallets
+│   └── [id].js          # GET/DELETE /api/wallets/:id
+├── transactions/        # Transaction endpoints
+│   ├── index.js         # GET/POST /api/transactions
+│   ├── [address].js     # GET /api/transactions/:address
+│   └── swap.js          # POST /api/transactions/swap
+├── prices/
+│   └── index.js         # GET /api/prices
+└── health.js            # GET /api/health
 ```
 
 ### Frontend Layer (`src/client/`)
@@ -164,16 +195,23 @@ src/server/
 
 ### Rate Limiting Strategy
 
+Rate limiting is implemented using Upstash Redis for distributed, serverless-compatible rate limiting:
+
 ```javascript
-// Authentication: 5 attempts per 15 minutes (brute force protection)
-authLimiter: { windowMs: 15 * 60 * 1000, max: 5 }
+// api/_lib/rate-limit.js
 
-// General API: 100 requests per minute
-apiLimiter: { windowMs: 1 * 60 * 1000, max: 100 }
+// Authentication endpoints: 5 requests per 60 seconds (brute force protection)
+authLimiter: Ratelimit.slidingWindow(5, '60 s')
 
-// Transactions: 10 per minute (prevent abuse)
-transactionLimiter: { windowMs: 1 * 60 * 1000, max: 10 }
+// General API: 30 requests per 60 seconds
+apiLimiter: Ratelimit.slidingWindow(30, '60 s')
 ```
+
+**Implementation Features:**
+- Sliding window algorithm for smooth rate limiting
+- IP-based identification via `x-forwarded-for` header
+- Graceful degradation when Redis is unavailable
+- Rate limit headers in responses (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`)
 
 ### Cookie Security Configuration
 
@@ -836,12 +874,52 @@ module.exports.strings = {
 |---------------|----------------------|
 | Simulated transactions | Real blockchain integration |
 | Mnemonic stored as-is | Hardware Security Module (HSM) encryption |
-| In-memory rate limiting | Redis-backed distributed rate limiting |
-| Single-server deployment | Load-balanced cluster |
+| ✅ Upstash Redis rate limiting | Already implemented |
+| ✅ Serverless deployment (Vercel) | Already implemented |
 | Basic logging | Structured logging with APM |
 | No 2FA | TOTP/WebAuthn authentication |
-| HTTP development | HTTPS/TLS required |
+| ✅ HTTPS/TLS (Vercel) | Already implemented |
 | Mock price data | Real exchange API integration |
+
+## Deployment Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         PRODUCTION                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────────┐  │
+│  │   Vercel     │    │   Vercel     │    │     Upstash      │  │
+│  │   CDN/Edge   │───►│  Serverless  │───►│     Redis        │  │
+│  │   (Static)   │    │  Functions   │    │  (Rate Limit)    │  │
+│  └──────────────┘    └──────┬───────┘    └──────────────────┘  │
+│                             │                                    │
+│                             ▼                                    │
+│                    ┌──────────────────┐                         │
+│                    │   Neon PostgreSQL │                         │
+│                    │   (Serverless DB) │                         │
+│                    └──────────────────┘                         │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Environment Configuration
+
+Configuration is managed through `src/config/`:
+
+```
+src/config/
+├── environments/
+│   ├── base.js          # Shared settings
+│   ├── development.js   # Local development
+│   ├── qa.js            # QA testing
+│   ├── main.js          # Pre-production
+│   └── production.js    # Production
+├── .env.example         # Environment template
+├── jest.config.js       # Test configuration
+├── webpack.config.js    # Build configuration
+└── migrate.config.js    # Migration configuration
+```
 
 ---
 

@@ -43,7 +43,7 @@ cd crypto-wallet-mvp
 npm install
 
 # 2. Setup environment
-cp .env.example .env
+cp src/config/.env.example .env
 # Edit .env with your PostgreSQL credentials
 
 # 3. Setup database with test data (one command!)
@@ -53,7 +53,7 @@ npm run setup:db
 npm run dev
 ```
 
-**That's it!** 🎉
+**That's it!**
 
 Open http://localhost:3000 and login with:
 - **Email**: `admin@test.com`
@@ -154,6 +154,14 @@ Open http://localhost:3000 and login with:
 
 ```
 crypto-wallet-mvp/
+├── api/                     # Vercel Serverless Functions
+│   ├── _lib/               # Shared utilities (auth, db, rate-limit)
+│   ├── auth/               # Authentication endpoints
+│   ├── wallets/            # Wallet endpoints
+│   ├── transactions/       # Transaction endpoints
+│   ├── prices/             # Price endpoints
+│   └── health.js           # Health check
+│
 ├── src/
 │   ├── client/              # Frontend React application
 │   │   ├── components/      # React components
@@ -172,13 +180,21 @@ crypto-wallet-mvp/
 │   │   ├── types/          # TypeScript interfaces
 │   │   └── constants/      # Shared constants
 │   │
-│   └── server/              # Backend Express API
+│   ├── config/              # Configuration files
+│   │   ├── environments/   # Environment-specific configs
+│   │   ├── .env.example    # Environment template
+│   │   ├── jest.config.js  # Jest configuration
+│   │   ├── webpack.config.js # Webpack configuration
+│   │   └── migrate.config.js # Migration configuration
+│   │
+│   └── server/              # Backend Express API (local dev)
 │       ├── controllers/    # Route handlers
 │       ├── middleware/     # Auth, validation, rate limiting
 │       ├── schemas/        # Joi validation schemas
 │       ├── services/       # Business logic
 │       ├── utils/          # Server utilities
 │       ├── queries/        # SQL queries
+│       ├── scripts/        # Database scripts
 │       ├── locales/        # Server-side strings
 │       ├── config/         # Server config
 │       └── index.js        # Server entry point
@@ -190,7 +206,7 @@ crypto-wallet-mvp/
 │   ├── setup.js            # Test configuration
 │   └── helpers.js          # Test utilities
 ├── migrations/              # Database migrations
-├── scripts/                 # Database scripts
+├── docs/                    # Documentation
 └── public/                  # Static assets
 ```
 
@@ -207,19 +223,68 @@ crypto-wallet-mvp/
 
 - ✅ **Password Hashing**: bcrypt with salt rounds
 - ✅ **HttpOnly Cookies**: JWT stored in secure HttpOnly cookies (not localStorage)
-- ✅ **Rate Limiting**: Protection against brute force attacks (login, registration, API)
+- ✅ **Rate Limiting**: Upstash Redis-based rate limiting (5 req/min auth, 30 req/min API)
 - ✅ **Input Validation**: Joi schemas for all API endpoints + client-side validation
 - ✅ **SQL Injection Prevention**: Parameterized queries throughout
 - ✅ **Environment Variables**: Sensitive data in .env (JWT_SECRET required)
 - ✅ **Error Boundaries**: Graceful error handling without exposing internals
 - ✅ **CORS Configuration**: Proper cross-origin resource sharing setup
+- ✅ **Security Headers**: X-Frame-Options, X-Content-Type-Options via Vercel
 
 ⚠️ **Note**: This is an MVP for demonstration. For production, additionally consider:
-- Implement HTTPS/TLS
 - Add 2FA authentication
 - Use hardware security modules for key storage
 - Implement proper key encryption at rest
 - Add request logging and monitoring
+
+## 🚀 Deployment
+
+The application is deployed on:
+- **Frontend/API**: [Vercel](https://vercel.com) (serverless functions)
+- **Database**: [Neon](https://neon.tech) (serverless PostgreSQL)
+
+### Live Demo
+- **URL**: https://crypto-wallet-mvp.vercel.app
+
+### Deploy Your Own
+
+#### 1. Database Setup (Neon)
+```bash
+# Create account at https://neon.tech
+# Create a new project
+# Copy the connection string from dashboard
+```
+
+#### 2. Vercel Deployment
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Set environment variables in Vercel dashboard:
+# - DATABASE_URL (from Neon)
+# - JWT_SECRET (generate secure key)
+# - UPSTASH_REDIS_REST_URL (optional, for rate limiting)
+# - UPSTASH_REDIS_REST_TOKEN (optional, for rate limiting)
+```
+
+#### 3. Rate Limiting (Optional)
+```bash
+# Create account at https://upstash.com
+# Create a Redis database
+# Add UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN to Vercel
+```
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | Neon PostgreSQL connection string |
+| `JWT_SECRET` | Yes | Secret key for JWT signing |
+| `UPSTASH_REDIS_REST_URL` | No | Upstash Redis URL for rate limiting |
+| `UPSTASH_REDIS_REST_TOKEN` | No | Upstash Redis token |
 
 ## 🎯 Code Quality & Architecture
 
