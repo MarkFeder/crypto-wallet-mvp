@@ -15,6 +15,10 @@ node_modules/
 .env.development.local
 .env.test.local
 .env.production.local
+src/config/.env.development
+src/config/.env.qa
+src/config/.env.main
+src/config/.env.production
 
 # Logs
 npm-debug.log*
