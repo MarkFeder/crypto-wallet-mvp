@@ -24,9 +24,7 @@
   ],
   "git": {
     "deploymentEnabled": {
-      "main": true,
-      "qa": true,
-      "production": true
+      "main": true
     }
   }
 }
