@@ -4,6 +4,7 @@ const db = require('../_lib/db');
 const { generateToken, createAuthCookie } = require('../_lib/auth');
 const { setCorsHeaders } = require('../_lib/cors');
 const { validateBody } = require('../_lib/validate');
+const { rateLimitAuth } = require('../_lib/rate-limit');
 
 const registerSchema = Joi.object({
   username: Joi.string().alphanum().min(3).max(30).required().messages({
@@ -42,6 +43,9 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // Apply rate limiting
+  if (await rateLimitAuth(req, res)) return;
 
   try {
     // Validate request body

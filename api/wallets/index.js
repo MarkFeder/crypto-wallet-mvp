@@ -4,6 +4,7 @@ const { requireAuth } = require('../_lib/auth');
 const { setCorsHeaders } = require('../_lib/cors');
 const { validateBody } = require('../_lib/validate');
 const cryptoUtils = require('../_lib/crypto-utils');
+const { rateLimitApi } = require('../_lib/rate-limit');
 
 const createWalletSchema = Joi.object({
   name: Joi.string().trim().min(1).max(50).required().messages({
@@ -40,6 +41,9 @@ const queries = {
 module.exports = async function handler(req, res) {
   // Handle CORS
   if (setCorsHeaders(req, res)) return;
+
+  // Apply rate limiting
+  if (await rateLimitApi(req, res)) return;
 
   // Check authentication
   const user = requireAuth(req, res);
