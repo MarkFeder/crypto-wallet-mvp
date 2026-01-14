@@ -2,10 +2,13 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+// Root directory (two levels up from src/config)
+const rootDir = path.resolve(__dirname, '../..');
+
 module.exports = {
-  entry: './src/client/index.tsx',
+  entry: path.resolve(rootDir, 'src/client/index.tsx'),
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(rootDir, 'dist'),
     filename: 'bundle.[contenthash].js',
     clean: true
   },
@@ -36,7 +39,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html',
+      template: path.resolve(rootDir, 'public/index.html'),
       favicon: false
     }),
     new webpack.DefinePlugin({

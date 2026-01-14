@@ -1,4 +1,8 @@
+const path = require('path');
 require('dotenv').config();
+
+// Root directory (two levels up from src/config)
+const rootDir = path.resolve(__dirname, '../..');
 
 module.exports = {
   databaseUrl: process.env.DATABASE_URL || {
@@ -9,7 +13,7 @@ module.exports = {
     port: parseInt(process.env.DB_PORT || '5432', 10),
   },
   migrationsTable: 'pgmigrations',
-  dir: 'migrations',
+  dir: path.resolve(rootDir, 'migrations'),
   direction: 'up',
   count: Infinity,
   timestamp: true,
