@@ -3,7 +3,7 @@ const {
   deriveBitcoinAddress,
   deriveEthereumAddress,
   validateMnemonic,
-} = require('../../src/server/utils/crypto-utils');
+} = require('../../src/server/utils/cryptoUtils');
 
 describe('Crypto Utilities', () => {
   // Known test mnemonic for deterministic tests

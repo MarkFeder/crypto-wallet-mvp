@@ -4,7 +4,7 @@ const {
   calculateSwapWithFee,
   hasSufficientBalance,
   toFixedSafe,
-} = require('../../src/server/utils/calculations');
+} = require('../../src/common/utils/calculations');
 
 describe('Calculation Utilities', () => {
   describe('safeParseFloat', () => {
