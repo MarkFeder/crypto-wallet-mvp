@@ -4,7 +4,7 @@ const { setCorsHeaders } = require('../_lib/cors');
 
 const queries = {
   findWalletByIdAndUserId: `
-    SELECT *
+    SELECT id, name, created_at
     FROM wallets
     WHERE id = $1 AND user_id = $2
   `,

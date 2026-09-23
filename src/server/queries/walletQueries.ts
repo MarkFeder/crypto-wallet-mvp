@@ -26,7 +26,7 @@ export const walletQueries = {
 
   // Get wallet by ID and user ID
   findWalletByIdAndUserId: `
-    SELECT *
+    SELECT id, name, created_at
     FROM wallets
     WHERE id = $1 AND user_id = $2
   `,
