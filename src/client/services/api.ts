@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { API_BASE_URL } from '../../common/constants/config';
+import { API_BASE_URL, API_ENDPOINTS } from '../../common/constants/config';
 import { storageService } from './storageService';
 
 class ApiService {
@@ -22,10 +22,25 @@ class ApiService {
     this.client.interceptors.response.use(
       response => response,
       error => {
-        if (error.response?.status === 401) {
+        // A 401 from submitting credentials means they were rejected, not that
+        // the session expired. Redirecting on it would reload the page and wipe
+        // the error before the form could show it.
+        const url: string = error.config?.url || '';
+        const isCredentialSubmit =
+          url.includes(API_ENDPOINTS.AUTH.LOGIN) || url.includes(API_ENDPOINTS.AUTH.REGISTER);
+
+        if (error.response?.status === 401 && !isCredentialSubmit) {
           storageService.clearAuth();
           window.location.href = '/login';
         }
+
+        // Surface the server's own message. Without this a rejected login reads
+        // only "Request failed with status code 401", which explains nothing.
+        const serverMessage = error.response?.data?.error;
+        if (typeof serverMessage === 'string' && serverMessage) {
+          error.message = serverMessage;
+        }
+
         return Promise.reject(error);
       }
     );
