@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      data: { user: userData },
+      user: userData,
     });
   } catch (error) {
     console.error('Get user error:', error);

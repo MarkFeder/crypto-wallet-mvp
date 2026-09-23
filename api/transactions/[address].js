@@ -46,10 +46,8 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      data: {
-        transactions: result.rows,
-        count: result.rows.length,
-      },
+      transactions: result.rows,
+      count: result.rows.length,
     });
   } catch (error) {
     console.error('Get transaction history error:', error);

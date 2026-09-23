@@ -151,13 +151,11 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      data: {
-        swap: {
-          from: { token: fromToken, amount: fromAmount },
-          to: { token: toToken, amount: toAmountFormatted },
-          fee: toFixedSafe(feeUSD, 2),
-          txHash,
-        },
+      swap: {
+        from: { token: fromToken, amount: fromAmount },
+        to: { token: toToken, amount: toAmountFormatted },
+        fee: toFixedSafe(feeUSD, 2),
+        txHash,
       },
     });
   } catch (error) {

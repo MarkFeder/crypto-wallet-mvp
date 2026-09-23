@@ -69,7 +69,7 @@ module.exports = async function handler(req, res) {
     res.setHeader('Set-Cookie', createAuthCookie(token));
     return res.status(201).json({
       success: true,
-      data: { user },
+      user,
     });
   } catch (error) {
     if (error.code === '23505') {

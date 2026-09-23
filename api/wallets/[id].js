@@ -52,13 +52,11 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      data: {
-        wallet: {
-          id: wallet.id,
-          name: wallet.name,
-          created_at: wallet.created_at,
-          addresses: addressesResult.rows,
-        },
+      wallet: {
+        id: wallet.id,
+        name: wallet.name,
+        created_at: wallet.created_at,
+        addresses: addressesResult.rows,
       },
     });
   } catch (error) {

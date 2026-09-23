@@ -74,7 +74,7 @@ async function getWallets(req, res, user) {
 
     return res.status(200).json({
       success: true,
-      data: { wallets },
+      wallets,
     });
   } catch (error) {
     console.error('Get wallets error:', error);
@@ -114,13 +114,11 @@ async function createWallet(req, res, user) {
 
     return res.status(201).json({
       success: true,
-      data: {
-        wallet,
-        mnemonic,
-        addresses: {
-          BTC: btcAddress.address,
-          ETH: ethAddress.address,
-        },
+      wallet,
+      mnemonic,
+      addresses: {
+        BTC: btcAddress.address,
+        ETH: ethAddress.address,
       },
     });
   } catch (error) {

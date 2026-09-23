@@ -105,15 +105,13 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      data: {
-        transaction: {
-          txHash,
-          from: fromAddress,
-          to: toAddress,
-          amount,
-          tokenSymbol,
-          status: TRANSACTION_CONFIG.DEFAULT_STATUS,
-        },
+      transaction: {
+        txHash,
+        from: fromAddress,
+        to: toAddress,
+        amount,
+        tokenSymbol,
+        status: TRANSACTION_CONFIG.DEFAULT_STATUS,
       },
     });
   } catch (error) {

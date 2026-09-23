@@ -53,9 +53,7 @@ module.exports = async function handler(req, res) {
     res.setHeader('Set-Cookie', createAuthCookie(token));
     return res.status(200).json({
       success: true,
-      data: {
-        user: { id: user.id, username: user.username, email: user.email },
-      },
+      user: { id: user.id, username: user.username, email: user.email },
     });
   } catch (error) {
     console.error('Login error:', error);
