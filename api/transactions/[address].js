@@ -8,10 +8,13 @@ const PAGINATION = {
 };
 
 const queries = {
+  // Matches every address column rather than wallet_address alone: the insert
+  // path stores the sender there, so filtering on it by itself hides incoming
+  // transfers — an address that only ever received returns nothing, forever.
   findTransactionsByAddress: `
     SELECT tx_hash, from_address, to_address, amount, token_symbol, status, timestamp
     FROM transactions
-    WHERE wallet_address = $1
+    WHERE wallet_address = $1 OR from_address = $1 OR to_address = $1
     ORDER BY timestamp DESC
     LIMIT $2 OFFSET $3
   `,

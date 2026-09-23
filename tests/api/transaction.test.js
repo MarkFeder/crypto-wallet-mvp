@@ -328,6 +328,44 @@ describe('Transaction API', () => {
 
       expect(response.status).toBe(400);
     });
+
+    // Incoming transfers MUST appear. The endpoint's SQL matches on
+    // wallet_address, from_address OR to_address, so a transfer belongs to the
+    // history of both parties — previously the predicate was wallet_address
+    // alone, and since the send path writes the SENDER there, an address that
+    // only ever received got an empty history forever.
+    //
+    // This test used to pin the outgoing-only behavior as a documented defect.
+    // The predicate, the mock, and this expectation moved together, exactly as
+    // the original comment on it asked for.
+    it('should return incoming transfers where the address is only the recipient', async () => {
+      const incomingTxHash = '0x' + '3'.repeat(64);
+
+      // wallet_address is a DIFFERENT address (the counterparty/sender); the
+      // queried address appears only as to_address.
+      mockDb.storage.transactions.push({
+        id: 3,
+        wallet_address: validToAddress,
+        tx_hash: incomingTxHash,
+        from_address: validToAddress,
+        to_address: validFromAddress,
+        amount: '2.0',
+        token_symbol: 'ETH',
+        status: 'confirmed',
+        created_at: new Date().toISOString(),
+      });
+
+      const response = await request(app)
+        .get(`/api/transactions/history/${validFromAddress}`)
+        .set('Cookie', [`auth_token=${authToken}`]);
+
+      expect(response.status).toBe(200);
+      // The 2 outgoing rows seeded in beforeEach, plus the incoming one.
+      expect(response.body.transactions).toHaveLength(3);
+      expect(
+        response.body.transactions.map((tx) => tx.tx_hash)
+      ).toContain(incomingTxHash);
+    });
   });
 
   describe('GET /api/transactions/:txHash - Get Transaction Details', () => {

@@ -161,11 +161,16 @@ const query = jest.fn(async (queryText, params = []) => {
   }
 
   // GET TRANSACTIONS BY ADDRESS
+  // Mirrors the production predicate exactly: findTransactionsByAddress matches
+  // on wallet_address, from_address OR to_address, so a transfer belongs to the
+  // history of both parties. Keeping this in sync matters — if the mock is
+  // stricter than the SQL, incoming transfers vanish silently and the tests
+  // still pass.
   if (normalizedQuery.includes('select') && normalizedQuery.includes('transactions') &&
       (normalizedQuery.includes('from_address') || normalizedQuery.includes('to_address'))) {
     const [address, limit = 50, offset = 0] = params;
     const transactions = storage.transactions.filter(
-      (t) => t.from_address === address || t.to_address === address
+      (t) => t.wallet_address === address || t.from_address === address || t.to_address === address
     );
     return { rows: transactions.slice(offset, offset + limit), rowCount: transactions.length };
   }
