@@ -12,6 +12,23 @@
             "statusMessage": "Checking for secret files..."
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "c=$(jq -r '.tool_input.command // empty'); [ -n \"$c\" ] || exit 0; block=\"\"; if printf '%s' \"$c\" | grep -qE 'migrate:down|init:db'; then block=1; fi; if printf '%s' \"$c\" | grep -qiE 'drop[[:space:]]+(table|database|schema)|truncate[[:space:]]+table|delete[[:space:]]+from'; then block=1; fi; if [ -n \"$block\" ]; then echo \"Blocked: this command destroys database data. Confirm the DATABASE_URL target (production Neon vs a branch) before running it.\" >&2; exit 2; fi; exit 0",
+            "timeout": 10,
+            "statusMessage": "Checking for destructive DB commands..."
+          },
+          {
+            "type": "command",
+            "command": "c=$(jq -r '.tool_input.command // empty'); [ -n \"$c\" ] || exit 0; case \"$c\" in *\"git push\"*) ;; *) exit 0 ;; esac; b=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); if [ \"$b\" = main ] || printf '%s' \"$c\" | grep -qE 'git[[:space:]]+push[^|&;]*[[:space:]]main([[:space:]]|$)'; then echo \"Blocked: pushing main auto-deploys to Vercel production. Confirm before proceeding.\" >&2; exit 2; fi; exit 0",
+            "timeout": 10,
+            "statusMessage": "Checking for production deploy..."
+          }
+        ]
       }
     ],
     "PostToolUse": [
