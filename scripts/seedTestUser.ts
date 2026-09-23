@@ -103,7 +103,7 @@ async function seedTestUser(): Promise<void> {
        VALUES ($1, $2, $3)
        ON CONFLICT DO NOTHING
        RETURNING id`,
-      [userId, 'My Main Wallet', mnemonic]
+      [userId, 'My Main Wallet', cryptoUtils.encryptMnemonic(mnemonic)]
     );
 
     if (wallet1Result.rows.length > 0) {
@@ -142,7 +142,7 @@ async function seedTestUser(): Promise<void> {
        VALUES ($1, $2, $3)
        ON CONFLICT DO NOTHING
        RETURNING id`,
-      [userId, 'Trading Wallet', mnemonic2]
+      [userId, 'Trading Wallet', cryptoUtils.encryptMnemonic(mnemonic2)]
     );
 
     if (wallet2Result.rows.length > 0) {

@@ -27,10 +27,12 @@ export const createWallet = async (req: Request, res: Response): Promise<Respons
 
     const mnemonic = cryptoUtils.generateMnemonic();
 
+    // Only the ciphertext is persisted; the plaintext below is returned once,
+    // in this response, so the user can back it up.
     const walletResult = await db.query<WalletRow>(queries.wallet.createWallet, [
       userId,
       name,
-      mnemonic,
+      cryptoUtils.encryptMnemonic(mnemonic),
     ]);
     const wallet = walletResult.rows[0];
 

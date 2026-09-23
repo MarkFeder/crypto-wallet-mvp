@@ -3,6 +3,8 @@ const {
   deriveBitcoinAddress,
   deriveEthereumAddress,
   validateMnemonic,
+  encryptMnemonic,
+  decryptMnemonic,
 } = require('../../src/server/utils/cryptoUtils');
 
 describe('Crypto Utilities', () => {
@@ -143,6 +145,104 @@ describe('Crypto Utilities', () => {
       // Valid words but invalid checksum
       const invalidChecksum = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon';
       expect(validateMnemonic(invalidChecksum)).toBe(false);
+    });
+  });
+
+  describe('mnemonic encryption', () => {
+    it('should round-trip a mnemonic through encrypt and decrypt', () => {
+      const stored = encryptMnemonic(testMnemonic);
+
+      expect(decryptMnemonic(stored)).toBe(testMnemonic);
+    });
+
+    it('should never contain the plaintext phrase in the stored value', () => {
+      const stored = encryptMnemonic(testMnemonic);
+
+      expect(stored).not.toContain(testMnemonic);
+      expect(stored).not.toContain('abandon');
+    });
+
+    it('should produce a v1 iv:tag:ciphertext envelope', () => {
+      const stored = encryptMnemonic(testMnemonic);
+      const parts = stored.split(':');
+
+      expect(parts).toHaveLength(4);
+      expect(parts[0]).toBe('v1');
+      expect(parts[1]).toMatch(/^[0-9a-f]{24}$/); // 12-byte IV
+      expect(parts[2]).toMatch(/^[0-9a-f]{32}$/); // 16-byte GCM auth tag
+      expect(parts[3]).toMatch(/^[0-9a-f]+$/);
+    });
+
+    it('should use a fresh IV so equal mnemonics encrypt differently', () => {
+      const first = encryptMnemonic(testMnemonic);
+      const second = encryptMnemonic(testMnemonic);
+
+      expect(first).not.toBe(second);
+      // Both still decrypt to the same plaintext.
+      expect(decryptMnemonic(first)).toBe(testMnemonic);
+      expect(decryptMnemonic(second)).toBe(testMnemonic);
+    });
+
+    it('should reject a tampered ciphertext', () => {
+      const stored = encryptMnemonic(testMnemonic);
+      const [version, iv, tag, ciphertext] = stored.split(':');
+
+      // Flip the final hex digit of the ciphertext.
+      const flipped = ciphertext.slice(0, -1) + (ciphertext.at(-1) === 'a' ? 'b' : 'a');
+      const tampered = [version, iv, tag, flipped].join(':');
+
+      expect(() => decryptMnemonic(tampered)).toThrow();
+    });
+
+    it('should reject a tampered auth tag', () => {
+      const stored = encryptMnemonic(testMnemonic);
+      const [version, iv, tag, ciphertext] = stored.split(':');
+
+      const flippedTag = tag.slice(0, -1) + (tag.at(-1) === 'a' ? 'b' : 'a');
+      const tampered = [version, iv, flippedTag, ciphertext].join(':');
+
+      expect(() => decryptMnemonic(tampered)).toThrow();
+    });
+
+    it('should reject values that are not in the encrypted format', () => {
+      // This is the shape of a row written before encryption was introduced.
+      expect(() => decryptMnemonic(testMnemonic)).toThrow(/expected encrypted format/);
+      expect(() => decryptMnemonic('')).toThrow(/expected encrypted format/);
+      expect(() => decryptMnemonic('v2:aa:bb:cc')).toThrow(/expected encrypted format/);
+    });
+
+    it('should refuse to encrypt when the key is missing', () => {
+      const original = process.env.MNEMONIC_ENCRYPTION_KEY;
+      delete process.env.MNEMONIC_ENCRYPTION_KEY;
+
+      try {
+        expect(() => encryptMnemonic(testMnemonic)).toThrow(/MNEMONIC_ENCRYPTION_KEY is not set/);
+      } finally {
+        process.env.MNEMONIC_ENCRYPTION_KEY = original;
+      }
+    });
+
+    it('should refuse a key that is not 32 bytes', () => {
+      const original = process.env.MNEMONIC_ENCRYPTION_KEY;
+      process.env.MNEMONIC_ENCRYPTION_KEY = 'tooshort';
+
+      try {
+        expect(() => encryptMnemonic(testMnemonic)).toThrow(/64 hex characters/);
+      } finally {
+        process.env.MNEMONIC_ENCRYPTION_KEY = original;
+      }
+    });
+
+    it('should not decrypt with a different key', () => {
+      const stored = encryptMnemonic(testMnemonic);
+      const original = process.env.MNEMONIC_ENCRYPTION_KEY;
+      process.env.MNEMONIC_ENCRYPTION_KEY = 'f'.repeat(64);
+
+      try {
+        expect(() => decryptMnemonic(stored)).toThrow();
+      } finally {
+        process.env.MNEMONIC_ENCRYPTION_KEY = original;
+      }
     });
   });
 

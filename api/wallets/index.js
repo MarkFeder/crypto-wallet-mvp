@@ -95,7 +95,13 @@ async function createWallet(req, res, user) {
     // Generate mnemonic and create wallet
     const mnemonic = cryptoUtils.generateMnemonic();
 
-    const walletResult = await db.query(queries.createWallet, [user.id, name, mnemonic]);
+    // Only the ciphertext is persisted; the plaintext below is returned once,
+    // in this response, so the user can back it up.
+    const walletResult = await db.query(queries.createWallet, [
+      user.id,
+      name,
+      cryptoUtils.encryptMnemonic(mnemonic),
+    ]);
     const wallet = walletResult.rows[0];
 
     // Derive addresses
