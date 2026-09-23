@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in *.env.example|*.env.sample) exit 0 ;; *.env|*.env.*|*.pem|*.key|*.cert|*secrets.json|*credentials.json) echo \"Blocked: $f holds secrets. Ask the user explicitly before editing it.\" >&2; exit 2 ;; esac; exit 0",
+            "timeout": 10,
+            "statusMessage": "Checking for secret files..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_response.filePath // .tool_input.file_path // empty'); [ -n \"$f\" ] || exit 0; case \"$f\" in *.js|*.jsx|*.ts|*.tsx|*.css|*.json) ;; *) exit 0 ;; esac; cd \"${CLAUDE_PROJECT_DIR:-.}\" 2>/dev/null || exit 0; if [ -x ./node_modules/.bin/prettier ]; then ./node_modules/.bin/prettier --ignore-unknown --write \"$f\" >/dev/null 2>&1; fi; case \"$f\" in src/*|*/src/*) if [ -x ./node_modules/.bin/eslint ]; then ./node_modules/.bin/eslint --fix \"$f\" >/dev/null 2>&1; fi ;; esac; exit 0",
+            "timeout": 60,
+            "statusMessage": "Formatting and linting..."
+          }
+        ]
+      }
+    ]
+  }
+}

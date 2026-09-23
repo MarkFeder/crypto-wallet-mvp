@@ -62,9 +62,12 @@ Thumbs.db
 .DS_Store
 
 # Local tool configs
-.*aude/
 tmp*aude-*
 nul
+
+# Claude Code: project config is committed, personal/local state is not
+.claude/settings.local.json
+.claude/worktrees/
 
 .vercel
 .env*.local
