@@ -288,6 +288,8 @@ describe('Transaction API', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.transactions).toBeDefined();
       expect(Array.isArray(response.body.transactions)).toBe(true);
+      // Assert the seeded rows actually come back, not just that an array is returned
+      expect(response.body.transactions).toHaveLength(2);
     });
 
     it('should return empty array for address with no transactions', async () => {
@@ -310,11 +312,13 @@ describe('Transaction API', () => {
 
     it('should support pagination with limit and offset', async () => {
       const response = await request(app)
-        .get(`/api/transactions/history/${validFromAddress}?limit=10&offset=0`)
+        .get(`/api/transactions/history/${validFromAddress}?limit=1&offset=0`)
         .set('Cookie', [`auth_token=${authToken}`]);
 
       expect(response.status).toBe(200);
       expect(response.body.transactions).toBeDefined();
+      // limit must actually be applied end-to-end (2 rows are seeded)
+      expect(response.body.transactions).toHaveLength(1);
     });
 
     it('should return 400 for invalid address format', async () => {

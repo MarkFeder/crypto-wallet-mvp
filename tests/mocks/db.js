@@ -151,8 +151,10 @@ const query = jest.fn(async (queryText, params = []) => {
   }
 
   // GET TRANSACTION BY HASH
+  // Match on the WHERE clause, not the select list: the history query also
+  // selects tx_hash, and matching on it here would shadow the branch below.
   if (normalizedQuery.includes('select') && normalizedQuery.includes('transactions') &&
-      normalizedQuery.includes('tx_hash')) {
+      normalizedQuery.includes('where tx_hash')) {
     const [tx_hash] = params;
     const tx = storage.transactions.find((t) => t.tx_hash === tx_hash);
     return { rows: tx ? [tx] : [], rowCount: tx ? 1 : 0 };

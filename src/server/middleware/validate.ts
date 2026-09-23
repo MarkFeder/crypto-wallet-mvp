@@ -64,7 +64,15 @@ export const validateQuery = (schema: Joi.ObjectSchema) => {
       return;
     }
 
-    req.query = value;
+    // Express 5 defines req.query as a getter-only property, so a plain
+    // assignment silently no-ops (and throws in strict mode). Shadow it with an
+    // own data property to apply the sanitized values.
+    Object.defineProperty(req, 'query', {
+      value,
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    });
     next();
   };
 };
